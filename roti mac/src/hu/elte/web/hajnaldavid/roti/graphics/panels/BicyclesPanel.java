@@ -1,12 +1,10 @@
 package hu.elte.web.hajnaldavid.roti.graphics.panels;
 
 import hu.elte.web.hajnaldavid.roti.graphics.frames.MainFrame;
-import hu.elte.web.hajnaldavid.roti.graphics.panels.dashboard.BasicSinglePanel;
 import hu.elte.web.hajnaldavid.roti.graphics.table.TableFactory;
 import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.GenericTableModel;
 import hu.elte.web.hajnaldavid.roti.persistence.connection.CrudService;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Bicycle;
-import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -31,7 +29,7 @@ public class BicyclesPanel extends BasicSinglePanel {
 	}
 
 	public void init() {
-
+		super.init();
 		setTable();
 		setButtons();
 
@@ -40,19 +38,19 @@ public class BicyclesPanel extends BasicSinglePanel {
 	public void setTable() {
 
 		JTable table = TableFactory.createTable(tableModel);
-	
+
 		JScrollPane scrollPane = new JScrollPane(table);
 
 		table.setPreferredScrollableViewportSize(new Dimension(
 				MainFrame.SIZE_X - 50, 200));
 
-		mainPanel.add(scrollPane, BorderLayout.CENTER);
+		mainComponentPanel.add(scrollPane, BorderLayout.CENTER);
 
 	}
 
 	public void setTableModel(
 
-	GenericTableModel genericTableModel) {
+	GenericTableModel<Bicycle, CrudService<Bicycle>> genericTableModel) {
 
 		this.tableModel = genericTableModel;
 
@@ -66,7 +64,7 @@ public class BicyclesPanel extends BasicSinglePanel {
 
 		addButton.setBackground(new Color(52, 152, 219));
 
-		mainPanel.add(addButton, BorderLayout.SOUTH);
+		mainComponentPanel.add(addButton, BorderLayout.SOUTH);
 
 	}
 

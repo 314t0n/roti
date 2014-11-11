@@ -1,8 +1,6 @@
 package hu.elte.web.hajnaldavid.roti.graphics.panels;
 
-import hu.elte.web.hajnaldavid.roti.Main;
 import hu.elte.web.hajnaldavid.roti.graphics.frames.MainFrame;
-import hu.elte.web.hajnaldavid.roti.graphics.panels.dashboard.BasicSinglePanel;
 import hu.elte.web.hajnaldavid.roti.graphics.table.TableFactory;
 import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.GenericTableModel;
 import hu.elte.web.hajnaldavid.roti.persistence.connection.CrudService;
@@ -17,13 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class StationsPanel extends BasicSinglePanel {
-
-	private static final Logger log4j = LogManager.getLogger(Main.class
-			.getName());
 
 	private GenericTableModel<Station, CrudService<Station>> tableModel;
 
@@ -37,7 +29,7 @@ public class StationsPanel extends BasicSinglePanel {
 	}
 
 	public void init() {
-		setBackground(new Color(245, 215, 110));
+		super.init();
 		setTable();
 		setButtons();
 
@@ -57,13 +49,15 @@ public class StationsPanel extends BasicSinglePanel {
 		table.setPreferredScrollableViewportSize(new Dimension(
 				MainFrame.SIZE_X - 50, 200));
 
-		mainPanel.add(scrollPane, BorderLayout.CENTER);
+		mainComponentPanel.add(scrollPane, BorderLayout.CENTER);
+		
+		scrollPane.setBackground(new Color(55, 107, 140));
 
 	}
 
 	public void setTableModel(
 
-	GenericTableModel genericTableModel) {
+	GenericTableModel<Station, CrudService<Station>> genericTableModel) {
 
 		this.tableModel = genericTableModel;
 
@@ -75,9 +69,9 @@ public class StationsPanel extends BasicSinglePanel {
 
 		addButton.setFont(new Font("Kartika", Font.PLAIN, 11));
 
-		addButton.setBackground(new Color(52, 152, 219));
+		addButton.setBackground(new Color(55, 107, 140));
 
-		mainPanel.add(addButton, BorderLayout.SOUTH);
+		mainComponentPanel.add(addButton, BorderLayout.SOUTH);
 
 	}
 

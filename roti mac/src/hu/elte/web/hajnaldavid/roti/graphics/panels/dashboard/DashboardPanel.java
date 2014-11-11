@@ -1,16 +1,14 @@
 package hu.elte.web.hajnaldavid.roti.graphics.panels.dashboard;
 
-import javax.swing.JPanel;
-
 import java.awt.Color;
-import java.awt.GridLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.SystemColor;
 
 import javax.swing.JButton;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.Font;
-import java.awt.SystemColor;
+import javax.swing.JPanel;
 
 public class DashboardPanel extends JPanel {
 

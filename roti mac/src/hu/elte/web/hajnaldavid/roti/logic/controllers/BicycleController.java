@@ -1,13 +1,10 @@
 package hu.elte.web.hajnaldavid.roti.logic.controllers;
 
-import hu.elte.web.hajnaldavid.roti.Main;
 import hu.elte.web.hajnaldavid.roti.graphics.dialogs.AddBicycleDialog;
 import hu.elte.web.hajnaldavid.roti.graphics.frames.MainFrame;
 import hu.elte.web.hajnaldavid.roti.graphics.panels.BicyclesPanel;
 import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.GenericTableModel;
-import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.TableModelFactory;
 import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.TableModelRouter;
-import hu.elte.web.hajnaldavid.roti.logic.domainmodels.BicycleDomain;
 import hu.elte.web.hajnaldavid.roti.logic.domainmodels.StationDomain;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.FullCapacityException;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Bicycle;
@@ -15,33 +12,20 @@ import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.builder.BicycleBuilder;
 
 import java.awt.Component;
-import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-public class BicycleController {
-
-	private static final Logger log4j = LogManager.getLogger(Main.class
-			.getName());
-
-	private BicycleDomain<Bicycle> bicycleDomain;
-	private StationDomain<Station> stationDomain;
-	private BicyclesPanel mainPanel;
+public class BicycleController extends BasicController {
+	
+	private StationDomain<Station> stationDomain;	
 	private AddBicycleDialog addModal;
-	private TableModelRouter tableModelRouter;
 
-	public BicycleController(BicycleDomain<Bicycle> dao,
-			BicyclesPanel mainPanel, TableModelRouter tableModelRouter) {
+	public BicycleController(BicyclesPanel mainPanel, TableModelRouter tableModelRouter) {
 
-		this.tableModelRouter = tableModelRouter;
+		super(mainPanel, tableModelRouter);
 
 		mainPanel.setTableModel((GenericTableModel) tableModelRouter
 				.getTableModelByName("BicycleTableModel"));
 
-		this.bicycleDomain = dao;
-		this.stationDomain = new StationDomain(Station.class);
-		this.mainPanel = mainPanel;
+		this.stationDomain = new StationDomain<Station>(Station.class);	
 		this.addModal = new AddBicycleDialog();
 
 		mainPanel.init();
@@ -51,7 +35,7 @@ public class BicycleController {
 
 	private void setActionListeners() {
 
-		mainPanel.getAddButton().addActionListener(p -> showAddDialog());
+		((BicyclesPanel) mainPanel).getAddButton().addActionListener(p -> showAddDialog());
 
 		addModal.getCancelButton().addActionListener(p -> hideAddDialog());
 
@@ -85,7 +69,7 @@ public class BicycleController {
 
 	private void refreshTables() {
 
-		mainPanel.getTableModel().refresh();
+		((BicyclesPanel) mainPanel).getTableModel().refresh();
 
 		((GenericTableModel) tableModelRouter
 				.getTableModelByName("StationTableModel")).refresh();

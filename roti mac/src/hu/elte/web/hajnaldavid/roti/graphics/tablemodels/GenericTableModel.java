@@ -1,11 +1,8 @@
 package hu.elte.web.hajnaldavid.roti.graphics.tablemodels;
 
 import hu.elte.web.hajnaldavid.roti.Main;
-import hu.elte.web.hajnaldavid.roti.logic.domainmodels.StationDomain;
 import hu.elte.web.hajnaldavid.roti.persistence.connection.CrudService;
-import hu.elte.web.hajnaldavid.roti.persistence.connection.GenericDao;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.RotiEntity;
-import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +45,7 @@ public class GenericTableModel<T extends RotiEntity, S extends CrudService<T>>
 		this.source = source;
 		this.columnNames = columnNames;
 		this.isEditAbleColumn = new boolean[columnNames.length];
-		this.items = new ArrayList();
+		this.items = new ArrayList<T>();
 		this.readAll();
 	}
 

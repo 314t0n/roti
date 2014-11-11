@@ -1,12 +1,11 @@
 package hu.elte.web.hajnaldavid.roti.graphics.panels.dashboard;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.BoxLayout;
 import java.awt.BorderLayout;
-import javax.swing.JTable;
-import javax.swing.UIManager;
 import java.awt.SystemColor;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
 
 public class StationPanel extends JPanel {
 	private JTable table;

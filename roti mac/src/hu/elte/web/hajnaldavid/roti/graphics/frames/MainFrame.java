@@ -6,9 +6,8 @@ import hu.elte.web.hajnaldavid.roti.graphics.panels.dashboard.DashboardPanel;
 import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.TableModelFactory;
 import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.TableModelRouter;
 import hu.elte.web.hajnaldavid.roti.logic.controllers.BicycleController;
+import hu.elte.web.hajnaldavid.roti.logic.controllers.DashboardController;
 import hu.elte.web.hajnaldavid.roti.logic.controllers.StationController;
-import hu.elte.web.hajnaldavid.roti.logic.domainmodels.BicycleDomain;
-import hu.elte.web.hajnaldavid.roti.logic.domainmodels.StationDomain;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Bicycle;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 
@@ -18,6 +17,7 @@ import java.awt.HeadlessException;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 public class MainFrame extends BaseFrame {
 
@@ -26,8 +26,9 @@ public class MainFrame extends BaseFrame {
 	private JTabbedPane jTabbedPane;
 	private TableModelRouter tableModelRouter;
 
-	StationController stationController;
-	BicycleController bicycleController;
+	private StationController stationController;
+	private BicycleController bicycleController;
+	private DashboardController dashboardController;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public MainFrame() throws HeadlessException {
@@ -40,20 +41,36 @@ public class MainFrame extends BaseFrame {
 
 		setTableModels();
 
-		stationController = new StationController(new StationDomain(
-				Station.class), new StationsPanel(), tableModelRouter);
+		stationController = new StationController(new StationsPanel(),
+				tableModelRouter);
 
-		bicycleController = new BicycleController(new BicycleDomain(
-				Bicycle.class), new BicyclesPanel(), tableModelRouter);
+		bicycleController = new BicycleController(new BicyclesPanel(),
+				tableModelRouter);
+
+		dashboardController = new DashboardController(new DashboardPanel(),
+				tableModelRouter);
 
 		setTabbedPane();
 
 		getContentPane().add(jTabbedPane, BorderLayout.CENTER);
 
-		getContentPane().setBackground(new Color(247, 202, 24));
+		getContentPane().setBackground(new Color(242, 226, 220));
 
-		jTabbedPane.setBackground(new Color(238, 238, 238));
+		jTabbedPane.setBackground(new Color(242, 226, 220));
 
+		Color blue = new Color(55, 107, 140);
+
+		jTabbedPane.setUI(new BasicTabbedPaneUI() {
+			@Override
+			protected void installDefaults() {
+				super.installDefaults();
+				highlight = blue;
+				lightHighlight = blue;
+				shadow = blue;
+				darkShadow = blue;
+				focus = blue;
+			}
+		});
 	}
 
 	private void setTableModels() {
@@ -71,7 +88,7 @@ public class MainFrame extends BaseFrame {
 					TableModelFactory.createTableModel(Station.class,
 							new String[] { "Név", "Kapacitás", "Aktuális",
 									"Státusz" }));
-			
+
 		} catch (InstantiationException | IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -83,7 +100,7 @@ public class MainFrame extends BaseFrame {
 		jTabbedPane = new JTabbedPane();
 
 		jTabbedPane
-				.addTab("Vezérlõpult", new JScrollPane(new DashboardPanel()));
+				.addTab("Vezérlõpult", new JScrollPane(dashboardController.getMainPanel()));
 		jTabbedPane.addTab("Állomások",
 				new JScrollPane(stationController.getMainPanel()));
 		jTabbedPane.addTab("Kerékpárok",

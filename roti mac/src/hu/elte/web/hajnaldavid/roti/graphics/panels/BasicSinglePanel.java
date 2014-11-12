@@ -4,7 +4,6 @@ import hu.elte.web.hajnaldavid.roti.Main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 
 import javax.swing.JPanel;
 

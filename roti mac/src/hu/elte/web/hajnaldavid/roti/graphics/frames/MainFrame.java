@@ -30,7 +30,6 @@ public class MainFrame extends BaseFrame {
 	private BicycleController bicycleController;
 	private DashboardController dashboardController;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public MainFrame() throws HeadlessException {
 
 		setTitle("Roti v0.9");

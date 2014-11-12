@@ -1,5 +1,7 @@
 package hu.elte.web.hajnaldavid.roti.graphics.panels.dashboard;
 
+import hu.elte.web.hajnaldavid.roti.graphics.panels.StationsPanel;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -11,6 +13,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class DashboardPanel extends JPanel {
+
+	private JPanel stationsPanel;
 
 	/**
 	 * Create the panel.
@@ -25,13 +29,13 @@ public class DashboardPanel extends JPanel {
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
-		JPanel panel = new StationPanel();
+		stationsPanel = new StationsPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.insets = new Insets(0, 0, 5, 5);
 		gbc_panel.fill = GridBagConstraints.BOTH;
 		gbc_panel.gridx = 0;
 		gbc_panel.gridy = 0;
-		add(panel, gbc_panel);
+		add(stationsPanel, gbc_panel);
 		
 		JPanel panel_1 = new JPanel();
 		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
@@ -62,9 +66,16 @@ public class DashboardPanel extends JPanel {
 		gbc_btnMgegyGomb.gridx = 1;
 		gbc_btnMgegyGomb.gridy = 1;
 		add(btnMgegyGomb, gbc_btnMgegyGomb);
-		
-	
 
 	}
+	
+	public void init(){
+		((StationsPanel) stationsPanel).init();
+		
+	}
 
+	public JPanel getStationsPanel() {
+		return stationsPanel;
+	}
+	
 }

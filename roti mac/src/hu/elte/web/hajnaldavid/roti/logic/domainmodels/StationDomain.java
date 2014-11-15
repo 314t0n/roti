@@ -7,19 +7,18 @@ import hu.elte.web.hajnaldavid.roti.persistence.entities.Bicycle;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 import hu.elte.web.hajnaldavid.roti.persistence.exception.NoSuchElement;
 
-import java.util.Optional;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class StationDomain<T extends Station> extends GenericDao<T> {
+public class StationDomain extends GenericDao<Station> {
 
 	private static final Logger log4j = LogManager.getLogger(Main.class
 			.getName());
 
-	public StationDomain(Class<T> type) {
-		super(type);
+	public StationDomain() {
+		super(Station.class);
 	}
 
 	public enum Status {
@@ -99,7 +98,7 @@ public class StationDomain<T extends Station> extends GenericDao<T> {
 
 			bicycle.setStation(station);
 
-			update((T) station);
+			update(station);
 
 			return true;
 		}
@@ -119,6 +118,11 @@ public class StationDomain<T extends Station> extends GenericDao<T> {
 
 		return station;
 
+	}
+	
+	public void clearStation(Station station){
+		station.getBikes().clear();
+		log4j.info(station + " has benn cleared!");
 	}
 
 }

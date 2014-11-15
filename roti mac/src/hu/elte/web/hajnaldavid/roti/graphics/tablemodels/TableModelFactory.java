@@ -12,8 +12,8 @@ public class TableModelFactory {
 			IllegalAccessException {
 
 		if (type.equals(Station.class)) {
-			StationDomain<Station> dao;
-			dao = new StationDomain(type);
+			StationDomain dao;
+			dao = new StationDomain();
 			return new StationTableModel(dao, propeties);
 		} else {
 			GenericDao<T> dao;

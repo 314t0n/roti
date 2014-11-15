@@ -1,6 +1,7 @@
 package hu.elte.web.hajnaldavid.roti.tests.logic;
 
 import hu.elte.web.hajnaldavid.roti.Main;
+import hu.elte.web.hajnaldavid.roti.logic.domainmodels.BicycleDomain;
 import hu.elte.web.hajnaldavid.roti.logic.domainmodels.StationDomain;
 import hu.elte.web.hajnaldavid.roti.logic.domainmodels.StationDomain.Status;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.FullCapacityException;
@@ -18,18 +19,23 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TestDomains {
+	
 	private static final Logger log4j = LogManager.getLogger(Main.class
 			.getName());
 
-	private StationDomain<Station> stationDomain;
+	private StationDomain stationDomain;
 
 	private Station station;
+	private Station stationTransferTo;
 
 	@Before
 	public void init() {
-		stationDomain = new StationDomain<Station>(Station.class);
-
+		stationDomain = new StationDomain();
+	
 		station = new StationBuilder().setName("Teszt").setMaximumCapacity(2)
+				.getInstance();
+		
+		stationTransferTo = new StationBuilder().setName("Teszt szállítás").setMaximumCapacity(1)
 				.getInstance();
 	}
 
@@ -64,8 +70,9 @@ public class TestDomains {
 	}
 
 	@After()
-	public void clean() {
+	public void clean() {			
 		stationDomain.delete(station);
+		stationDomain.delete(stationTransferTo);
 	}
 
 	@Test
@@ -93,5 +100,23 @@ public class TestDomains {
 
 		Assert.assertEquals(Status.NORMAL.getValue(), status.getValue());
 	
+	}
+	
+	@Test
+	public void testTransfer(){
+		
+		int initSize = stationTransferTo.getBikes().size();
+		
+		Bicycle testBike = new BicycleBuilder().setLendingPrice(999)
+				.getInstance();
+		
+		station.addBike(testBike);
+		
+		stationDomain.transferBike(station, stationTransferTo);
+		
+		Assert.assertEquals(initSize+1, stationTransferTo.getBikes().size());
+		
+		Assert.assertEquals(testBike, stationTransferTo.getBikes().get(initSize));
+		
 	}
 }

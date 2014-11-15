@@ -73,7 +73,7 @@ public class DBTest {
 		
 		DefaultMigration.migrateAll();
 
-		StationDomain<Station> stationDao = new StationDomain<Station>(Station.class);
+		StationDomain stationDao = new StationDomain();
 		
 		log4j.info(stationDao.readAll().get(0));
 
@@ -93,7 +93,7 @@ public class DBTest {
 		
 		DefaultMigration.migrateAll();
 
-		StationDomain<Station> stationDao = new StationDomain<Station>(Station.class);		
+		StationDomain stationDao = new StationDomain();		
 
 		Station stationA = stationDao.readAll().get(0);		
 		Station stationB = stationDao.readAll().get(1);		

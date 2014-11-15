@@ -15,7 +15,7 @@ import java.awt.Component;
 
 public class BicycleController extends BasicController {
 	
-	private StationDomain<Station> stationDomain;	
+	private StationDomain stationDomain;	
 	private AddBicycleDialog addModal;
 
 	public BicycleController(BicyclesPanel mainPanel, TableModelRouter tableModelRouter) {
@@ -25,7 +25,7 @@ public class BicycleController extends BasicController {
 		mainPanel.setTableModel((GenericTableModel) tableModelRouter
 				.getTableModelByName("BicycleTableModel"));
 
-		this.stationDomain = new StationDomain<Station>(Station.class);	
+		this.stationDomain = new StationDomain();	
 		this.addModal = new AddBicycleDialog();
 
 		mainPanel.init();

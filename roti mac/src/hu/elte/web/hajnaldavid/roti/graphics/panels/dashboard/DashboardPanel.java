@@ -1,5 +1,6 @@
 package hu.elte.web.hajnaldavid.roti.graphics.panels.dashboard;
 
+import hu.elte.web.hajnaldavid.roti.graphics.frames.MainFrame;
 import hu.elte.web.hajnaldavid.roti.graphics.panels.StationsPanel;
 
 import java.awt.Color;
@@ -21,7 +22,7 @@ public class DashboardPanel extends JPanel {
 	 */
 	public DashboardPanel() {
 
-		setBackground(new Color(224, 255, 255));
+		setBackground(MainFrame.PADDING_BG);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] {0, 0, 2};
 		gridBagLayout.rowHeights = new int[] {0, 0, 2};
@@ -54,7 +55,7 @@ public class DashboardPanel extends JPanel {
 		gbc_btnEgyGomb.insets = new Insets(0, 0, 0, 5);
 		gbc_btnEgyGomb.gridx = 0;
 		gbc_btnEgyGomb.gridy = 1;
-		add(btnEgyGomb, gbc_btnEgyGomb);
+		//add(btnEgyGomb, gbc_btnEgyGomb);
 		
 		JButton btnMgegyGomb = new JButton("m\u00E9gegy gomb");
 		btnMgegyGomb.setBackground(SystemColor.control);
@@ -65,7 +66,7 @@ public class DashboardPanel extends JPanel {
 		GridBagConstraints gbc_btnMgegyGomb = new GridBagConstraints();
 		gbc_btnMgegyGomb.gridx = 1;
 		gbc_btnMgegyGomb.gridy = 1;
-		add(btnMgegyGomb, gbc_btnMgegyGomb);
+		//add(btnMgegyGomb, gbc_btnMgegyGomb);
 
 	}
 	

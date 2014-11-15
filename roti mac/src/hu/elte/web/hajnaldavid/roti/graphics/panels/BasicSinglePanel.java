@@ -1,9 +1,9 @@
 package hu.elte.web.hajnaldavid.roti.graphics.panels;
 
 import hu.elte.web.hajnaldavid.roti.Main;
+import hu.elte.web.hajnaldavid.roti.graphics.frames.MainFrame;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 
 import javax.swing.JPanel;
 
@@ -24,7 +24,7 @@ public class BasicSinglePanel extends JPanel {
 
 
 	public void init() {
-		setBackground(new Color(242, 226, 220));		
+		setBackground(MainFrame.DEFAULT_BG);		
 	}
 	
 }

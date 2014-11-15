@@ -29,6 +29,12 @@ public class MainFrame extends BaseFrame {
 	private StationController stationController;
 	private BicycleController bicycleController;
 	private DashboardController dashboardController;
+	
+	public static final Color PADDING_BG = new Color(57,52,43);
+	public static final Color LIGHT_BG = new Color(125,124,98);
+	public static final Color DEFAULT_BG = new Color(195,188,172);
+	public static final Color LIGHT_BTN = new Color(217,216,212);
+	public static final Color DARK_BTN = new Color(34,34,47);
 
 	public MainFrame() throws HeadlessException {
 
@@ -53,21 +59,19 @@ public class MainFrame extends BaseFrame {
 
 		getContentPane().add(jTabbedPane, BorderLayout.CENTER);
 
-		getContentPane().setBackground(new Color(242, 226, 220));
+		getContentPane().setBackground(DEFAULT_BG);
 
-		jTabbedPane.setBackground(new Color(242, 226, 220));
-
-		Color blue = new Color(55, 107, 140);
+		jTabbedPane.setBackground(DEFAULT_BG);
 
 		jTabbedPane.setUI(new BasicTabbedPaneUI() {
 			@Override
 			protected void installDefaults() {
-				super.installDefaults();
-				highlight = blue;
-				lightHighlight = blue;
-				shadow = blue;
-				darkShadow = blue;
-				focus = blue;
+				super.installDefaults();					 
+				highlight = DEFAULT_BG;
+				lightHighlight = DEFAULT_BG;
+				shadow = DEFAULT_BG;
+				darkShadow = DEFAULT_BG;
+				focus = DEFAULT_BG;
 			}
 		});
 	}

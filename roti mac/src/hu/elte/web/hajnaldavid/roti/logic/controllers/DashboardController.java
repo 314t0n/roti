@@ -10,6 +10,7 @@ import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 public class DashboardController extends BasicController {
 	
 	private StationsPanel stationsPanel;
+	private StationController stationController;
 
 	@SuppressWarnings("unchecked")
 	public DashboardController(DashboardPanel mainPanel,
@@ -23,6 +24,8 @@ public class DashboardController extends BasicController {
 		
 		mainPanel.init();
 		
+		stationController = new StationController((StationsPanel) mainPanel.getStationsPanel(),
+				tableModelRouter);
 	}
 	
 	

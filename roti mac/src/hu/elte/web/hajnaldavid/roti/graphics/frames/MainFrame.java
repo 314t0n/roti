@@ -40,7 +40,7 @@ public class MainFrame extends BaseFrame {
 
 		setTitle("Roti v0.9");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setLocation(40, 60);
+		setLocation(1500, 60);
 		setSize(SIZE_X, SIZE_Y);
 		setLayout(new BorderLayout());
 

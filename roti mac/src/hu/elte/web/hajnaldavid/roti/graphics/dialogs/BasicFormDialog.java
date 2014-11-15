@@ -1,7 +1,10 @@
 package hu.elte.web.hajnaldavid.roti.graphics.dialogs;
 
+import hu.elte.web.hajnaldavid.roti.graphics.frames.MainFrame;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Window;
 
 import javax.swing.JButton;
@@ -34,15 +37,16 @@ public class BasicFormDialog extends JDialog {
 		this.repaint();
 	}
 
-	protected void initGui() {
-		
+	protected void initGui() {	
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBackground(MainFrame.DEFAULT_BG);
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		{
 			JPanel buttonPane = new JPanel();
+			buttonPane.setBackground(MainFrame.DEFAULT_BG);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
@@ -57,8 +61,17 @@ public class BasicFormDialog extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
+		setButtons();
 
 	}
+	
+	private void setButtons(){		
+		okButton.setFont(new Font("Kartika", Font.PLAIN, 11));
+		okButton.setBackground(MainFrame.LIGHT_BTN);
+		cancelButton.setFont(new Font("Kartika", Font.PLAIN, 11));
+		cancelButton.setBackground(MainFrame.LIGHT_BTN);
+	}
+	
 
 	public JButton getOkButton() {
 		return okButton;

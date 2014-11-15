@@ -2,6 +2,8 @@ package hu.elte.web.hajnaldavid.roti.tests.persistence;
 
 import hu.elte.web.hajnaldavid.roti.Main;
 import hu.elte.web.hajnaldavid.roti.logic.domainmodels.StationDomain;
+import hu.elte.web.hajnaldavid.roti.logic.exceptions.EmptyStationException;
+import hu.elte.web.hajnaldavid.roti.logic.exceptions.FullCapacityException;
 import hu.elte.web.hajnaldavid.roti.persistence.connection.CrudService;
 import hu.elte.web.hajnaldavid.roti.persistence.connection.GenericDao;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Bicycle;
@@ -103,7 +105,12 @@ public class DBTest {
 		int bikesOfA = stationA.getBikes().size();
 		int bikesOfB = stationB.getBikes().size();
 
-		stationDao.transferBike(stationA, stationB);
+		try {
+			stationDao.transferBike(stationA, stationB);
+		} catch (EmptyStationException | FullCapacityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		Assert.assertEquals(stationA.getBikes().size(), bikesOfA-1);
 		Assert.assertEquals(stationB.getBikes().size(), bikesOfB+1);

@@ -4,6 +4,7 @@ import hu.elte.web.hajnaldavid.roti.Main;
 import hu.elte.web.hajnaldavid.roti.logic.domainmodels.BicycleDomain;
 import hu.elte.web.hajnaldavid.roti.logic.domainmodels.StationDomain;
 import hu.elte.web.hajnaldavid.roti.logic.domainmodels.StationDomain.Status;
+import hu.elte.web.hajnaldavid.roti.logic.exceptions.EmptyStationException;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.FullCapacityException;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Bicycle;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
@@ -74,6 +75,21 @@ public class TestDomains {
 		stationDomain.delete(station);
 		stationDomain.delete(stationTransferTo);
 	}
+	
+	@Test
+	public void findByName(){
+		
+		station.setName("Árvíztûrõ tükörfúrógép");
+		
+		stationDomain.update(station);
+		
+		Station stationSearch = stationDomain.findByName("Árvíztûrõ tükörfúrógép");
+		
+		Assert.assertEquals(station.getName(), stationSearch.getName());
+		
+		stationDomain.delete(stationSearch);
+		
+	}
 
 	@Test
 	public void warningStatus() throws NoSuchElement {
@@ -112,7 +128,12 @@ public class TestDomains {
 		
 		station.addBike(testBike);
 		
-		stationDomain.transferBike(station, stationTransferTo);
+		try {
+			stationDomain.transferBike(station, stationTransferTo);
+		} catch (EmptyStationException | FullCapacityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		Assert.assertEquals(initSize+1, stationTransferTo.getBikes().size());
 		

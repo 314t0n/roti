@@ -16,10 +16,10 @@ import com.jgoodies.forms.layout.RowSpec;
 public class AddBicycleDialog extends BasicFormDialog {
 
 	private JTextField lendingPriceField;
-	private JComboBox bikesComboBox;
-	private JComboBox stationsComboBox;
-	private DefaultComboBoxModel bikeTypesListModel;
-	private DefaultComboBoxModel stationListModel;
+	private JComboBox<String> bikesComboBox;
+	private JComboBox<String> stationsComboBox;
+	private DefaultComboBoxModel<String> bikeTypesListModel;
+	private DefaultComboBoxModel<String> stationListModel;
 
 	public AddBicycleDialog() {
 		super();
@@ -50,18 +50,18 @@ public class AddBicycleDialog extends BasicFormDialog {
 		JLabel lblNewLabel_2 = new JLabel("Típus");
 		contentPanel.add(lblNewLabel_2, "2, 4, right, default");
 
-		bikeTypesListModel = new DefaultComboBoxModel();
+		bikeTypesListModel = new DefaultComboBoxModel<String>();
 		
-		bikesComboBox = new JComboBox(bikeTypesListModel);
+		bikesComboBox = new JComboBox<String>(bikeTypesListModel);
 
 		contentPanel.add(bikesComboBox, "4, 4");
 
-		stationListModel = new DefaultComboBoxModel();
+		stationListModel = new DefaultComboBoxModel<String>();
 
 		JLabel lblNewLabel_3 = new JLabel("Állomás");
 		contentPanel.add(lblNewLabel_3, "2, 6, right, default");
 
-		stationsComboBox = new JComboBox(stationListModel);
+		stationsComboBox = new JComboBox<String>(stationListModel);
 
 		contentPanel.add(stationsComboBox, "4, 6");
 
@@ -97,19 +97,19 @@ public class AddBicycleDialog extends BasicFormDialog {
 		return lendingPriceField;
 	}
 
-	public JComboBox getBikesComboBox() {
+	public JComboBox<String> getBikesComboBox() {
 		return bikesComboBox;
 	}
 
-	public JComboBox getStationsComboBox() {
+	public JComboBox<String> getStationsComboBox() {
 		return stationsComboBox;
 	}
 
-	public DefaultComboBoxModel getBikeTypesListModel() {
+	public DefaultComboBoxModel<String> getBikeTypesListModel() {
 		return bikeTypesListModel;
 	}
 
-	public DefaultComboBoxModel getStationListModel() {
+	public DefaultComboBoxModel<String> getStationListModel() {
 		return stationListModel;
 	}
 

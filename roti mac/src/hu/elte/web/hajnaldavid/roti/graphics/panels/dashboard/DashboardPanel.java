@@ -1,6 +1,7 @@
 package hu.elte.web.hajnaldavid.roti.graphics.panels.dashboard;
 
 import hu.elte.web.hajnaldavid.roti.graphics.frames.MainFrame;
+import hu.elte.web.hajnaldavid.roti.graphics.panels.SimulationPanel;
 import hu.elte.web.hajnaldavid.roti.graphics.panels.StationsPanel;
 
 import java.awt.Color;
@@ -16,6 +17,7 @@ import javax.swing.JPanel;
 public class DashboardPanel extends JPanel {
 
 	private JPanel stationsPanel;
+	private JPanel simulationPanel;
 
 	/**
 	 * Create the panel.
@@ -38,13 +40,13 @@ public class DashboardPanel extends JPanel {
 		gbc_panel.gridy = 0;
 		add(stationsPanel, gbc_panel);
 		
-		JPanel panel_1 = new JPanel();
+		simulationPanel = new SimulationPanel();
 		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
 		gbc_panel_1.insets = new Insets(0, 0, 5, 0);
 		gbc_panel_1.fill = GridBagConstraints.BOTH;
 		gbc_panel_1.gridx = 1;
 		gbc_panel_1.gridy = 0;
-		add(panel_1, gbc_panel_1);
+		add(simulationPanel, gbc_panel_1);
 		
 		JButton btnEgyGomb = new JButton("egy gomb");		
 		btnEgyGomb.setFont(new Font("Kartika", Font.PLAIN, 11));
@@ -72,7 +74,11 @@ public class DashboardPanel extends JPanel {
 	
 	public void init(){
 		((StationsPanel) stationsPanel).init();
-		
+		((SimulationPanel) simulationPanel).init();		
+	}	
+
+	public JPanel getSimulationPanel() {
+		return simulationPanel;
 	}
 
 	public JPanel getStationsPanel() {

@@ -1,10 +1,13 @@
 package hu.elte.web.hajnaldavid.roti.persistence.entities;
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Customer implements RotiEntity, Serializable {
@@ -18,6 +21,20 @@ public class Customer implements RotiEntity, Serializable {
 	private long id;
 	private String name;
 	private Integer credit;
+		
+	@OneToOne	
+	@JoinColumn(name="bike_id")
+	private Bicycle bicycle;	
+	
+	public Bicycle getBicycle() {
+		return bicycle;
+	}
+	public void setBicycle(Bicycle bicycle) {
+		this.bicycle = bicycle;
+	}
+	public Customer() {	
+		this.credit = 0;
+	}
 	public long getId() {
 		return id;
 	}

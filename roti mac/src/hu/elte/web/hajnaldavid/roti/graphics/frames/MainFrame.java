@@ -14,6 +14,8 @@ import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.HeadlessException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -21,7 +23,9 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 public class MainFrame extends BaseFrame {
 
-	public static final int SIZE_X = 600;
+	public static volatile boolean running = false;
+	
+	public static final int SIZE_X = 1000;
 	public static final int SIZE_Y = 400;
 	private JTabbedPane jTabbedPane;
 	private TableModelRouter tableModelRouter;
@@ -29,7 +33,7 @@ public class MainFrame extends BaseFrame {
 	private StationController stationController;
 	private BicycleController bicycleController;
 	private DashboardController dashboardController;
-	
+		
 	public static final Color PADDING_BG = new Color(57,52,43);
 	public static final Color LIGHT_BG = new Color(125,124,98);
 	public static final Color DEFAULT_BG = new Color(195,188,172);
@@ -40,7 +44,7 @@ public class MainFrame extends BaseFrame {
 
 		setTitle("Roti v0.9");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setLocation(1500, 60);
+		setLocation(100, 60);
 		setSize(SIZE_X, SIZE_Y);
 		setLayout(new BorderLayout());
 
@@ -53,7 +57,7 @@ public class MainFrame extends BaseFrame {
 				tableModelRouter);
 
 		dashboardController = new DashboardController(new DashboardPanel(),
-				tableModelRouter);
+				tableModelRouter);	
 
 		setTabbedPane();
 
@@ -74,6 +78,13 @@ public class MainFrame extends BaseFrame {
 				focus = DEFAULT_BG;
 			}
 		});
+		
+		this.addWindowListener(new WindowAdapter() {	
+			@Override
+			public void windowClosing(WindowEvent arg0) {			
+				running = false;	
+			}
+		});
 	}
 
 	private void setTableModels() {
@@ -92,8 +103,7 @@ public class MainFrame extends BaseFrame {
 							new String[] { "Név", "Kapacitás", "Aktuális",
 									"Státusz" }));
 
-		} catch (InstantiationException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
+		} catch (InstantiationException | IllegalAccessException e) {			
 			e.printStackTrace();
 		}
 

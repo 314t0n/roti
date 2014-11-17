@@ -93,22 +93,27 @@ public class LendingDomain extends GenericDao<Lending> {
 	
 	//public ...
 
-	public void lendBicycle(Customer customer, Station station, Bicycle bicycle)
+	public Lending lendBicycle(Customer customer, Station station, Bicycle bicycle)
 			throws NonPayAbilityException, EmptyStationException, NoSuchElement {
 
 		Lending lending = checkStationBikes(station).checkCustomerCredit(
 				customer, bicycle).createLending(customer, bicycle);
 
 		removeBikeFromStation(station, bicycle).deductCredit(customer, bicycle).saveLending(lending);
+		
+		return lending;
 
 	}
 
-	public void lendRandomBicycle(Customer customer, Station station)
+	public Lending lendRandomBicycle(Customer customer, Station station)
 			throws NonPayAbilityException, EmptyStationException, NoSuchElement {
 
 		Bicycle bicycle = checkStationBikes(station).getRandomBike(station);
+		
+		customer.setBicycle(bicycle);
+	
 
-		lendBicycle(customer, station, bicycle);
+		return lendBicycle(customer, station, bicycle);
 
 	}
 

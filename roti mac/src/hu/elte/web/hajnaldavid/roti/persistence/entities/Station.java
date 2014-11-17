@@ -108,6 +108,8 @@ public class Station implements RotiEntity, Serializable {
 		if (selected < 0) {
 			throw new NoSuchElement(bike);
 		}
+		
+		bikes.get(selected).setStation(null);
 
 		return this.bikes.remove(selected);
 

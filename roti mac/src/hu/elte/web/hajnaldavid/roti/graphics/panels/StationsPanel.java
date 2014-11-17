@@ -3,6 +3,7 @@ package hu.elte.web.hajnaldavid.roti.graphics.panels;
 import hu.elte.web.hajnaldavid.roti.graphics.frames.MainFrame;
 import hu.elte.web.hajnaldavid.roti.graphics.table.TableFactory;
 import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.GenericTableModel;
+import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.StatusCellRenderer;
 import hu.elte.web.hajnaldavid.roti.persistence.connection.CrudService;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 
@@ -42,6 +43,8 @@ public class StationsPanel extends BasicSinglePanel {
 	public void setTable() {
 
 		table = TableFactory.createTable(tableModel);
+		
+		table.setDefaultRenderer(Station.class, new StatusCellRenderer());
 		
 		initComponents();
 

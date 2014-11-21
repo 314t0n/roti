@@ -91,7 +91,7 @@ public class StationDomain extends GenericDao<Station> {
 	}
 
 	public Bicycle selectRandomBike(Station station) {
-		int numberOfBikes = station.getBikes().size();
+		int numberOfBikes = station.getCurrentCapacity();
 		Random random = new Random();
 		int index = random.nextInt(numberOfBikes);
 		return station.getBikes().get(index);
@@ -100,7 +100,7 @@ public class StationDomain extends GenericDao<Station> {
 	public boolean addBike(Station station, Bicycle bicycle)
 			throws FullCapacityException {
 
-		if (station.getBikes().size() + 1 < station.getMaximumCapacity()) {
+		if (station.getCurrentCapacity() < station.getMaximumCapacity()) {
 
 			station.addBike(bicycle);
 

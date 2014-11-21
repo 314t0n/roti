@@ -28,6 +28,7 @@ public class SimulationController extends BasicController {
 
 	private List<Customer> customers = new ArrayList<Customer>();
 	private boolean status = true;
+	private static int numberOfCustomers = 1;
 
 	private StationDomain stationDomain;
 	private LendingDomain lendingDomain;
@@ -61,10 +62,9 @@ public class SimulationController extends BasicController {
 
 	private Lending lendBicycle(Customer customer, Station station)
 			throws NonPayAbilityException, EmptyStationException, NoSuchElement {
-		synchronized (this) {
 
-			return lendingDomain.lendRandomBicycle(customer, station);
-		}
+		return lendingDomain.lendRandomBicycle(customer, station);
+
 	}
 
 	private void returnBike(Customer customer, Station station)
@@ -72,12 +72,12 @@ public class SimulationController extends BasicController {
 		lendingDomain.returnBicycle(customer, station);
 	}
 
-	//@TODO refactor
+	// @TODO refactor
 	private void doSimulation() {
 
 		MainFrame.running = !MainFrame.running;
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < numberOfCustomers; i++) {
 			customers.add(createCustomer());
 		}
 
@@ -92,52 +92,56 @@ public class SimulationController extends BasicController {
 						Station station = selectRandomStation();
 
 						if (customer.getBicycle() != null) {
-							log4j.debug("van bringa:" + customer.getName());
+							log4j.debug("van bringa: " + customer.getName());
 
 							try {
 								returnBike(customer, station);
+								log(customer.getName()
+										+ " leadta a kerékpárt: "
+										+ station.getName());
 							} catch (FullCapacityException e) {
-								log4j.debug(customer.getName()
+								log(customer.getName()
 										+ " nem tudta leadni a kerékpárt, mert tele van az állomás: "
 										+ station.getName());
+								log4j.debug(e.getMessage());
 							}
 
 						} else {
-							
+
 							log4j.debug("nincs bringa" + customer.getName());
-							
-						}
 
-						try {
+							try {
 
-							log(customer.getName() + " kölcsönözni próbál: "
-									+ station.getName());
-							Lending lending = lendBicycle(customer, station);
-
-							if (lending != null) {
 								log(customer.getName()
-										+ " felevett egy kerekpárt: "
-										+ lending.getBike().getType()
-												.toString());
+										+ " kölcsönözni próbál: "
+										+ station.getName());
+								Lending lending = lendBicycle(customer, station);
 
-								((GenericTableModel<Station, CrudService<Station>>) tableModelRouter
-										.getTableModelByName("StationTableModel"))
-										.update(station);
+								if (lending != null) {
+									log(customer.getName()
+											+ " felevett egy kerekpárt: "
+											+ lending.getBike().getType()
+													.toString() + " - "
+											+ station.getName());
+
+									((GenericTableModel<Station, CrudService<Station>>) tableModelRouter
+											.getTableModelByName("StationTableModel"))
+											.update(station);
+								}
+
+								Thread.sleep(2000);
+
+							} catch (NonPayAbilityException
+									| EmptyStationException | NoSuchElement e1) {
+								log(customer.getName() + ": " + e1.getMessage());
+								log4j.error(e1.getMessage());
+
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
-
-							Thread.sleep(2000);
-
-						} catch (NonPayAbilityException | EmptyStationException
-								| NoSuchElement e1) {
-							log(customer.getName() + ": " + e1.getMessage());
-							log4j.error(e1.getMessage());
-
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						} catch (Exception e) {
-							e.printStackTrace();
 						}
-
 					}
 					log4j.debug("sleep");
 					// sleep more

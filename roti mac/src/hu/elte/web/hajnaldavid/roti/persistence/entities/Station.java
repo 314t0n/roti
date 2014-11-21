@@ -131,4 +131,8 @@ public class Station implements RotiEntity, Serializable {
 				+ maximumCapacity + ", bikes=" + bikes + "]";
 	}
 
+	public Integer getCurrentCapacity() {
+		return this.getBikes().size();
+	}
+
 }

@@ -8,8 +8,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
@@ -48,13 +51,35 @@ public class GenericDao<T extends RotiEntity> implements CrudService<T> {
 		}
 	}
 
+	public void deleteAll() {
+		EntityManager em = getEntityManager();
+		try {
+			EntityTransaction tx = em.getTransaction();
+			tx.begin();
+			
+			CriteriaBuilder builder = em.getCriteriaBuilder();
+			CriteriaDelete<T> query = (CriteriaDelete<T>) builder
+					.createCriteriaDelete(type);
+			query.from((Class<T>) type);
+			em.createQuery(query).executeUpdate();
+			
+			tx.commit();
+		} catch (Exception ex) {
+			log4j.debug(ex.getMessage());
+			throw ex;
+		} finally {
+			em.close();
+		}
+	}
+
 	@Override
 	public void create(T t) {
 		EntityManager em = null;
 		try {
 			em = getEntityManager();
 			em.getTransaction().begin();
-			em.persist(t);
+			em.merge(t);
+			//em.persist(t);
 			em.getTransaction().commit();
 		} catch (Exception ex) {
 			if (read(new Long(t.getId()).intValue()) != null) {
@@ -137,5 +162,5 @@ public class GenericDao<T extends RotiEntity> implements CrudService<T> {
 			em.close();
 		}
 	}
-	
+
 }

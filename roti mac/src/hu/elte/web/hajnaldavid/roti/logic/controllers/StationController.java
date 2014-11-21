@@ -13,8 +13,6 @@ import hu.elte.web.hajnaldavid.roti.persistence.connection.CrudService;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.builder.StationBuilder;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 public class StationController extends BasicController {

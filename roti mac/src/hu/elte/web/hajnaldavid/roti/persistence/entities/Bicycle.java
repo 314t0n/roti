@@ -33,7 +33,7 @@ public class Bicycle implements RotiEntity, Serializable {
 	@ManyToOne
 	private Station station;
 
-	@OneToOne(cascade= CascadeType.PERSIST)	
+	@OneToOne(cascade={ CascadeType.REFRESH, CascadeType.REMOVE})	
 	@JoinColumn(name="customer_id")
 	private Customer customer;
 

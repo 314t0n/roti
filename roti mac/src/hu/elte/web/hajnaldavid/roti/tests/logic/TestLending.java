@@ -1,15 +1,16 @@
 package hu.elte.web.hajnaldavid.roti.tests.logic;
 
 import hu.elte.web.hajnaldavid.roti.Main;
+import hu.elte.web.hajnaldavid.roti.logic.domainmodels.BicycleDomain;
 import hu.elte.web.hajnaldavid.roti.logic.domainmodels.LendingDomain;
 import hu.elte.web.hajnaldavid.roti.logic.domainmodels.StationDomain;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.EmptyStationException;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.FullCapacityException;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.NonPayAbilityException;
+import hu.elte.web.hajnaldavid.roti.persistence.connection.GenericDao;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Bicycle;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Bicycle.BikeType;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Customer;
-import hu.elte.web.hajnaldavid.roti.persistence.entities.Lending;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.builder.BicycleBuilder;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.builder.CustomerBuilder;
@@ -53,7 +54,8 @@ public class TestLending {
 	@AfterClass
 	public static void clean() {
 		log4j.debug("after");
-		stationDomain.delete(station);
+		stationDomain.delete(station);		
+		//new LendingDomain().deleteAll();		
 	}
 
 	@Test(expected = NonPayAbilityException.class)
@@ -109,6 +111,7 @@ public class TestLending {
 		try {
 			stationDomain.addBike(station, bike);
 			log4j.debug("bike was added to station!");
+			//stationDomain.update(station);
 		} catch (FullCapacityException e1) {
 			log4j.debug(e1.getMessage());
 
@@ -120,7 +123,9 @@ public class TestLending {
 
 		try {
 
-			lenderController.lendBicycle(customer, station, bike);
+			//lenderController.lendBicycle(customer, station, bike);
+			
+			lenderController.lendRandomBicycle(customer, station);
 
 			log4j.debug(lenderController.readAll().size());
 

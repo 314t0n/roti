@@ -23,7 +23,7 @@ public class Customer implements RotiEntity, Serializable {
 	private String name;
 	private Integer credit;	
 
-	@OneToOne(cascade= CascadeType.PERSIST, fetch=FetchType.EAGER)	
+	@OneToOne(cascade= { CascadeType.REFRESH, CascadeType.REMOVE}, fetch=FetchType.EAGER)	
 	@JoinColumn(name="bike_id")
 	private Bicycle bicycle;	
 

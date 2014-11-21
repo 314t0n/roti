@@ -141,30 +141,6 @@ public class TestLending {
 		Assert.assertEquals(0, customer.getCredit().intValue());
 
 	}
-
-	@Test(expected = FullCapacityException.class)
-	public void testReturnBike() throws FullCapacityException {
-
-		log4j.debug("testReturnBike");
-
-		Bicycle bike = bicylceBuilder.getInstance();
-		Bicycle returnBike = bicylceBuilder.getInstance();
-
-		stationDomain.clearStation(station);
-
-		station.setMaximumCapacity(1);
-
-		LendingDomain lenderController = new LendingDomain();
-
-		lenderController.returnBicycle(bike, station);
-
-		Assert.assertEquals(1, station.getBikes().size());
-
-		lenderController.returnBicycle(returnBike, station);
-
-		Assert.assertEquals(null, returnBike.getCustomer());
-
-	}
 	
 	@Test()
 	public void testFindByCustomer() {
@@ -233,7 +209,7 @@ public class TestLending {
 
 			log4j.debug("lending was created!");
 
-			lenderController.returnBicycle(bike, station);
+			lenderController.returnBicycle(customer, station);
 
 		} catch (NonPayAbilityException e) {
 			log4j.debug(e.getMessage());

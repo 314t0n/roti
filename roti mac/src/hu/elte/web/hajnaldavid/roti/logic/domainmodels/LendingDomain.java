@@ -128,16 +128,17 @@ public class LendingDomain extends GenericDao<Lending> {
 
 	}
 
-	private LendingDomain removeCustomer(Bicycle bicycle) {
+	private LendingDomain removBikeFromCustomer(Customer customer) {
+		Bicycle bicycle = customer.getBicycle();
 		bicycle.setCustomer(null);
+		customer.setBicycle(null);
 		return this;
 	}
 
-	public void returnBicycle(Bicycle bike, Station station)
+	public void returnBicycle(Customer customer, Station station)
 			throws FullCapacityException {
-
-		checkStationBikeCapacity(station).addBikeToStation(bike, station)
-				.removeCustomer(bike);
+		checkStationBikeCapacity(station).addBikeToStation(
+				customer.getBicycle(), station).removBikeFromCustomer(customer);
 	}
 
 	public Bicycle getBicycleByCustomer(Customer customer) {
@@ -171,7 +172,7 @@ public class LendingDomain extends GenericDao<Lending> {
 		} finally {
 			em.close();
 		}
-		
+
 		return null;
 
 	}

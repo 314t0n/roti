@@ -1,8 +1,6 @@
 package hu.elte.web.hajnaldavid.roti;
 
 import hu.elte.web.hajnaldavid.roti.graphics.frames.MainFrame;
-import hu.elte.web.hajnaldavid.roti.logic.controllers.StationController;
-import hu.elte.web.hajnaldavid.roti.persistence.migrations.DefaultMigration;
 
 import java.awt.EventQueue;
 

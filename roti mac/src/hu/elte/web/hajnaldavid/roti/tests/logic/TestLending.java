@@ -7,7 +7,9 @@ import hu.elte.web.hajnaldavid.roti.logic.exceptions.EmptyStationException;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.FullCapacityException;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.NonPayAbilityException;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Bicycle;
+import hu.elte.web.hajnaldavid.roti.persistence.entities.Bicycle.BikeType;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Customer;
+import hu.elte.web.hajnaldavid.roti.persistence.entities.Lending;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.builder.BicycleBuilder;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.builder.CustomerBuilder;
@@ -104,7 +106,13 @@ public class TestLending {
 
 		stationDomain.clearStation(station);
 
-		station.addBike(bike);
+		try {
+			stationDomain.addBike(station, bike);
+			log4j.debug("bike was added to station!");
+		} catch (FullCapacityException e1) {
+			log4j.debug(e1.getMessage());
+
+		}
 
 		LendingDomain lenderController = new LendingDomain();
 
@@ -153,6 +161,95 @@ public class TestLending {
 		Assert.assertEquals(1, station.getBikes().size());
 
 		lenderController.returnBicycle(returnBike, station);
+
+		Assert.assertEquals(null, returnBike.getCustomer());
+
+	}
+	
+	@Test()
+	public void testFindByCustomer() {
+
+		log4j.debug("testFindByCustomer");
+
+		Bicycle bike = bicylceBuilder.setLendingPrice(1)
+				.setType(BikeType.CAMPING).getInstance();
+
+		Customer customer = customerBuilder.setCredit(1).setName("John Doe")
+				.getInstance();
+
+		stationDomain.clearStation(station);
+
+		station.addBike(bike);
+
+		LendingDomain lenderController = new LendingDomain();
+
+		try {
+
+			log4j.debug("create lending");
+			log4j.debug(customer);
+			log4j.debug(station);
+			log4j.debug(bike);
+
+			lenderController.lendBicycle(customer, station, bike);
+
+			log4j.debug(lenderController.readAll().size());
+
+			log4j.debug("lending was created!");
+
+		} catch (NonPayAbilityException e) {
+			log4j.debug(e.getMessage());
+		} catch (EmptyStationException e) {
+			log4j.debug(e.getMessage());
+		} catch (NoSuchElement e) {
+			log4j.debug(e.getMessage());
+		}
+
+		Bicycle b = lenderController.getBicycleByCustomer(customer);
+
+		Assert.assertEquals(bike, b);
+
+	}
+
+	public void testReturn() {
+
+		log4j.debug("testReturn");
+
+		Bicycle bike = bicylceBuilder.setLendingPrice(1).getInstance();
+
+		Customer customer = customerBuilder.setCredit(1).setName("John Doe")
+				.getInstance();
+
+		stationDomain.clearStation(station);
+
+		station.addBike(bike);
+
+		LendingDomain lenderController = new LendingDomain();
+
+		int startSize = lenderController.readAll().size();
+
+		try {
+
+			lenderController.lendBicycle(customer, station, bike);
+
+			log4j.debug("lending was created!");
+
+			lenderController.returnBicycle(bike, station);
+
+		} catch (NonPayAbilityException e) {
+			log4j.debug(e.getMessage());
+		} catch (EmptyStationException e) {
+			log4j.debug(e.getMessage());
+		} catch (NoSuchElement e) {
+			log4j.debug(e.getMessage());
+		} catch (FullCapacityException e) {
+			log4j.debug(e.getMessage());
+		}
+
+		int currentSize = lenderController.readAll().size();
+
+		Assert.assertNotEquals(startSize, currentSize);
+		Assert.assertEquals(0, station.getBikes().size());
+		Assert.assertEquals(0, customer.getCredit().intValue());
 
 	}
 

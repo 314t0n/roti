@@ -23,7 +23,7 @@ public class Lending implements RotiEntity, Serializable {
 
 	private Integer revenue;
 	
-	@OneToOne(cascade = CascadeType.REFRESH)
+	@OneToOne(cascade = CascadeType.ALL)
 	private Bicycle bike;
 
 	@OneToOne(cascade = CascadeType.ALL)

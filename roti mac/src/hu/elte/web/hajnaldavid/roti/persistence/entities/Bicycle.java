@@ -2,6 +2,7 @@ package hu.elte.web.hajnaldavid.roti.persistence.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,11 +32,11 @@ public class Bicycle implements RotiEntity, Serializable {
 
 	@ManyToOne
 	private Station station;
-	
-	@OneToOne
+
+	@OneToOne(cascade= CascadeType.PERSIST)	
 	@JoinColumn(name="customer_id")
 	private Customer customer;
-		
+
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -45,17 +46,15 @@ public class Bicycle implements RotiEntity, Serializable {
 	}
 
 	@Override
-	public long getId() {
-		// TODO Auto-generated method stub
-		return 0;
+	public long getId() {		
+		return id;
 	}
 
 	@Override
 	public void setId(long id) {
-		// TODO Auto-generated method stub
-
+		this.id = id;
 	}
-	
+
 	public Station getStation() {
 		return station;
 	}
@@ -74,7 +73,7 @@ public class Bicycle implements RotiEntity, Serializable {
 		case 2:
 			return this.lendingPrice;
 		case 3:
-			return this.type == null ? "-" : this.type.toString() ;
+			return this.type == null ? "-" : this.type.toString();
 		}
 		return null;
 	}
@@ -103,8 +102,45 @@ public class Bicycle implements RotiEntity, Serializable {
 
 	@Override
 	public String toString() {
+		String stationName = "no station";
+		if (station != null) {
+			stationName = station.getName();
+		}
 		return "Bicycle [id=" + id + ", type=" + type + ", lendingPrice="
-				+ lendingPrice + ", station=" + station.getName() + "]";
+				+ lendingPrice + ", station=" + stationName + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result
+				+ ((lendingPrice == null) ? 0 : lendingPrice.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Bicycle other = (Bicycle) obj;
+		if (id != other.id)
+			return false;
+		if (lendingPrice == null) {
+			if (other.lendingPrice != null)
+				return false;
+		} else if (!lendingPrice.equals(other.lendingPrice))
+			return false;
+		if (type != other.type)
+			return false;
+		return true;
+	}	
+	
 
 }

@@ -11,18 +11,26 @@ import hu.elte.web.hajnaldavid.roti.persistence.entities.Lending;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 import hu.elte.web.hajnaldavid.roti.persistence.exception.NoSuchElement;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class LendingDomain extends GenericDao<Lending> {
-	
+
 	private static final Logger log4j = LogManager.getLogger(Main.class
 			.getName());
 
 	public LendingDomain() {
 		super(Lending.class);
 	}
-	
 
 	private LendingDomain checkStationBikes(Station station)
 			throws EmptyStationException {
@@ -31,7 +39,6 @@ public class LendingDomain extends GenericDao<Lending> {
 		}
 		return this;
 	}
-	
 
 	private LendingDomain checkStationBikeCapacity(Station station)
 			throws FullCapacityException {
@@ -41,9 +48,8 @@ public class LendingDomain extends GenericDao<Lending> {
 		return this;
 	}
 
-	
-	private LendingDomain checkCustomerCredit(Customer customer,
-			Bicycle bicycle) throws NonPayAbilityException {
+	private LendingDomain checkCustomerCredit(Customer customer, Bicycle bicycle)
+			throws NonPayAbilityException {
 		if (customer.getCredit() < bicycle.getLendingPrice()) {
 			throw new NonPayAbilityException(customer, bicycle);
 		}
@@ -54,20 +60,24 @@ public class LendingDomain extends GenericDao<Lending> {
 
 		Lending lending = new Lending();
 
+		bicycle.setCustomer(customer);
+		customer.setBicycle(bicycle);
+
 		lending.setBike(bicycle);
 		lending.setCustomer(customer);
 		lending.setRevenue(bicycle.getLendingPrice());
 
 		return lending;
 	}
-	
-	private LendingDomain addBikeToStation(Bicycle bike, Station station){
+
+	private LendingDomain addBikeToStation(Bicycle bike, Station station) {
 		station.addBike(bike);
+		bike.setStation(station);
 		return this;
 	}
 
-	private LendingDomain removeBikeFromStation(Station station,
-			Bicycle bicycle) throws NoSuchElement {
+	private LendingDomain removeBikeFromStation(Station station, Bicycle bicycle)
+			throws NoSuchElement {
 		station.removeBike(bicycle);
 		return this;
 	}
@@ -81,7 +91,7 @@ public class LendingDomain extends GenericDao<Lending> {
 	private LendingDomain saveLending(Lending lending) {
 
 		this.create(lending);
-		
+
 		return this;
 
 	}
@@ -90,17 +100,19 @@ public class LendingDomain extends GenericDao<Lending> {
 	private Bicycle getRandomBike(Station station) {
 		return station.getBikes().get(0);
 	}
-	
-	//public ...
 
-	public Lending lendBicycle(Customer customer, Station station, Bicycle bicycle)
-			throws NonPayAbilityException, EmptyStationException, NoSuchElement {
+	// public ...
+
+	public Lending lendBicycle(Customer customer, Station station,
+			Bicycle bicycle) throws NonPayAbilityException,
+			EmptyStationException, NoSuchElement {
 
 		Lending lending = checkStationBikes(station).checkCustomerCredit(
 				customer, bicycle).createLending(customer, bicycle);
 
-		removeBikeFromStation(station, bicycle).deductCredit(customer, bicycle).saveLending(lending);
-		
+		removeBikeFromStation(station, bicycle).deductCredit(customer, bicycle)
+				.saveLending(lending);
+
 		return lending;
 
 	}
@@ -109,16 +121,58 @@ public class LendingDomain extends GenericDao<Lending> {
 			throws NonPayAbilityException, EmptyStationException, NoSuchElement {
 
 		Bicycle bicycle = checkStationBikes(station).getRandomBike(station);
-		
+
 		customer.setBicycle(bicycle);
-	
 
 		return lendBicycle(customer, station, bicycle);
 
 	}
 
-	public void returnBicycle(Bicycle bike, Station station) throws FullCapacityException {		
-		checkStationBikeCapacity(station).addBikeToStation(bike, station);		
+	private LendingDomain removeCustomer(Bicycle bicycle) {
+		bicycle.setCustomer(null);
+		return this;
 	}
 
+	public void returnBicycle(Bicycle bike, Station station)
+			throws FullCapacityException {
+
+		checkStationBikeCapacity(station).addBikeToStation(bike, station)
+				.removeCustomer(bike);
+	}
+
+	public Bicycle getBicycleByCustomer(Customer customer) {
+
+		EntityManager em = getEntityManager();
+
+		try {
+
+			CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+			CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
+			Root from = criteriaQuery.from(Lending.class);
+			CriteriaQuery<Object> select = criteriaQuery.select(from);
+
+			Predicate predicate = criteriaBuilder.equal(from.get("customer"),
+					customer);
+
+			criteriaQuery.where(predicate);
+
+			TypedQuery<Object> typedQuery = em.createQuery(select);
+			List<Object> resultList = typedQuery.getResultList();
+
+			if (resultList.size() == 0) {
+				throw new NoSuchElement(customer);
+			}
+
+			return ((Lending) resultList.get(0)).getBike();
+
+		} catch (Exception ex) {
+			log4j.error(ex.getMessage());
+
+		} finally {
+			em.close();
+		}
+		
+		return null;
+
+	}
 }

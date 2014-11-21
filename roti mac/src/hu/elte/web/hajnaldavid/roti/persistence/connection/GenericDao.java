@@ -31,7 +31,7 @@ public class GenericDao<T extends RotiEntity> implements CrudService<T> {
 		emf = Persistence.createEntityManagerFactory("roti mac");
 	}
 
-	private EntityManager getEntityManager() {
+	protected EntityManager getEntityManager() {
 		return emf.createEntityManager();
 	}
 

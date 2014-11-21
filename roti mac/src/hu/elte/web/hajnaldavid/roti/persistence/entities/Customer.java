@@ -1,8 +1,9 @@
 package hu.elte.web.hajnaldavid.roti.persistence.entities;
 import java.io.Serializable;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,12 +21,12 @@ public class Customer implements RotiEntity, Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String name;
-	private Integer credit;
-		
-	@OneToOne	
+	private Integer credit;	
+
+	@OneToOne(cascade= CascadeType.PERSIST, fetch=FetchType.EAGER)	
 	@JoinColumn(name="bike_id")
 	private Bicycle bicycle;	
-	
+
 	public Bicycle getBicycle() {
 		return bicycle;
 	}
@@ -55,7 +56,8 @@ public class Customer implements RotiEntity, Serializable {
 	}
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", credit=" + credit + "]";
+		String bike = this.bicycle == null ? "" : Long.toString(bicycle.getId());
+		return "User [id=" + id + ", name=" + name + ", credit=" + credit + ", bicycle=" + bike + "]";
 	}
 	@Override
 	public Object get(int columnIndex) {

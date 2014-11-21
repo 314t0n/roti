@@ -5,6 +5,7 @@ import hu.elte.web.hajnaldavid.roti.logic.exceptions.EmptyStationException;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.FullCapacityException;
 import hu.elte.web.hajnaldavid.roti.persistence.connection.GenericDao;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Bicycle;
+import hu.elte.web.hajnaldavid.roti.persistence.entities.Customer;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 import hu.elte.web.hajnaldavid.roti.persistence.exception.NoSuchElement;
 
@@ -61,6 +62,36 @@ public class StationDomain extends GenericDao<Station> {
 
 	}
 
+	public synchronized void returnBicycle(Customer customer, Station station)
+			throws FullCapacityException {
+		checkStationBikeCapacity(station).addBikeToStation(
+				customer.getBicycle(), station).removBikeFromCustomer(customer);
+		
+		update(station);
+
+	}
+
+	private StationDomain addBikeToStation(Bicycle bike, Station station) {
+		station.addBike(bike);
+		bike.setStation(station);
+		return this;
+	}
+
+	private StationDomain removBikeFromCustomer(Customer customer) {
+		Bicycle bicycle = customer.getBicycle();
+		bicycle.setCustomer(null);
+		customer.setBicycle(null);
+		return this;
+	}
+
+	private StationDomain checkStationBikeCapacity(Station station)
+			throws FullCapacityException {
+		if ((station.getBikes().size() == station.getMaximumCapacity())) {
+			throw new FullCapacityException(station);
+		}
+		return this;
+	}
+
 	public boolean transferBike(Station from, Station to)
 			throws EmptyStationException, FullCapacityException {
 
@@ -97,7 +128,7 @@ public class StationDomain extends GenericDao<Station> {
 		return station.getBikes().get(index);
 	}
 
-	public boolean addBike(Station station, Bicycle bicycle)
+	public synchronized boolean addBike(Station station, Bicycle bicycle)
 			throws FullCapacityException {
 
 		if (station.getCurrentCapacity() < station.getMaximumCapacity()) {

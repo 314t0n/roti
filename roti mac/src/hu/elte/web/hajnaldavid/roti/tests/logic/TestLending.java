@@ -204,17 +204,18 @@ public class TestLending {
 
 		station.addBike(bike);
 
-		LendingDomain lenderController = new LendingDomain();
+		LendingDomain lenderDomain = new LendingDomain();
+		StationDomain stationDomain = new StationDomain();
 
-		int startSize = lenderController.readAll().size();
+		int startSize = lenderDomain.readAll().size();
 
 		try {
 
-			lenderController.lendBicycle(customer, station, bike);
+			lenderDomain.lendBicycle(customer, station, bike);
 
 			log4j.debug("lending was created!");
 
-			lenderController.returnBicycle(customer, station);
+			stationDomain.returnBicycle(customer, station);
 
 		} catch (NonPayAbilityException e) {
 			log4j.debug(e.getMessage());
@@ -226,7 +227,7 @@ public class TestLending {
 			log4j.debug(e.getMessage());
 		}
 
-		int currentSize = lenderController.readAll().size();
+		int currentSize = lenderDomain.readAll().size();
 
 		Assert.assertNotEquals(startSize, currentSize);
 		Assert.assertEquals(0, station.getBikes().size());

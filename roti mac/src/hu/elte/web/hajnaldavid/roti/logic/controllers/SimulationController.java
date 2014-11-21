@@ -69,13 +69,19 @@ public class SimulationController extends BasicController {
 
 	private void returnBike(Customer customer, Station station)
 			throws FullCapacityException {
-		lendingDomain.returnBicycle(customer, station);
+		stationDomain.returnBicycle(customer, station);
 	}
 
 	// @TODO refactor
 	private void doSimulation() {
 
 		MainFrame.running = !MainFrame.running;
+		
+		if(MainFrame.running){
+			((SimulationPanel) mainPanel).getStartButton().setText("Megállít");
+		}else{
+			((SimulationPanel) mainPanel).getStartButton().setText("Újraindít");
+		}
 
 		for (int i = 0; i < numberOfCustomers; i++) {
 			customers.add(createCustomer());
@@ -123,10 +129,7 @@ public class SimulationController extends BasicController {
 											+ lending.getBike().getType()
 													.toString() + " - "
 											+ station.getName());
-
-									((GenericTableModel<Station, CrudService<Station>>) tableModelRouter
-											.getTableModelByName("StationTableModel"))
-											.update(station);
+									
 								}
 
 								Thread.sleep(2000);
@@ -142,6 +145,10 @@ public class SimulationController extends BasicController {
 								e.printStackTrace();
 							}
 						}
+						
+						((GenericTableModel<Station, CrudService<Station>>) tableModelRouter
+								.getTableModelByName("StationTableModel"))
+								.update(station);
 					}
 					log4j.debug("sleep");
 					// sleep more

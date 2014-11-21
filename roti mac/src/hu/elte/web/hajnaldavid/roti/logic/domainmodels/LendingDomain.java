@@ -40,13 +40,7 @@ public class LendingDomain extends GenericDao<Lending> {
 		return this;
 	}
 
-	private LendingDomain checkStationBikeCapacity(Station station)
-			throws FullCapacityException {
-		if ((station.getBikes().size() == station.getMaximumCapacity())) {
-			throw new FullCapacityException(station);
-		}
-		return this;
-	}
+
 
 	private LendingDomain checkCustomerCredit(Customer customer, Bicycle bicycle)
 			throws NonPayAbilityException {
@@ -68,12 +62,6 @@ public class LendingDomain extends GenericDao<Lending> {
 		lending.setRevenue(bicycle.getLendingPrice());
 
 		return lending;
-	}
-
-	private LendingDomain addBikeToStation(Bicycle bike, Station station) {
-		station.addBike(bike);
-		bike.setStation(station);
-		return this;
 	}
 
 	private LendingDomain removeBikeFromStation(Station station, Bicycle bicycle)
@@ -126,20 +114,7 @@ public class LendingDomain extends GenericDao<Lending> {
 
 	}
 
-	private LendingDomain removBikeFromCustomer(Customer customer) {
-		Bicycle bicycle = customer.getBicycle();
-		bicycle.setCustomer(null);
-		customer.setBicycle(null);
-		return this;
-	}
-	//@TODO átrakni a station-ba
-	public synchronized void returnBicycle(Customer customer, Station station)
-			throws FullCapacityException {
-		checkStationBikeCapacity(station).addBikeToStation(
-				customer.getBicycle(), station).removBikeFromCustomer(customer);
-		
-	}
-
+	
 	public synchronized Bicycle getBicycleByCustomer(Customer customer) {
 
 		EntityManager em = getEntityManager();

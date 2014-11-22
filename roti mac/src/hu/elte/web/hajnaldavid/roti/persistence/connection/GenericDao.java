@@ -56,13 +56,13 @@ public class GenericDao<T extends RotiEntity> implements CrudService<T> {
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
-			
+
 			CriteriaBuilder builder = em.getCriteriaBuilder();
 			CriteriaDelete<T> query = (CriteriaDelete<T>) builder
 					.createCriteriaDelete(type);
 			query.from((Class<T>) type);
 			em.createQuery(query).executeUpdate();
-			
+
 			tx.commit();
 		} catch (Exception ex) {
 			log4j.debug(ex.getMessage());
@@ -73,14 +73,15 @@ public class GenericDao<T extends RotiEntity> implements CrudService<T> {
 	}
 
 	@Override
-	public void create(T t) {
+	public T create(T t) {
 		EntityManager em = null;
 		try {
 			em = getEntityManager();
 			em.getTransaction().begin();
-			em.merge(t);
-			//em.persist(t);
+			t = em.merge(t);
+			// em.persist(t);
 			em.getTransaction().commit();
+			return t;
 		} catch (Exception ex) {
 			if (read(new Long(t.getId()).intValue()) != null) {
 				log4j.debug("Entity " + t + " already exists.");
@@ -104,13 +105,14 @@ public class GenericDao<T extends RotiEntity> implements CrudService<T> {
 	}
 
 	@Override
-	public void update(T t) {
+	public T update(T t) {
 		EntityManager em = null;
 		try {
 			em = getEntityManager();
 			em.getTransaction().begin();
-			t = em.merge(t);
+			t = em.merge(t);	
 			em.getTransaction().commit();
+			return t;
 		} catch (Exception ex) {
 			String msg = ex.getLocalizedMessage();
 			if (msg == null || msg.length() == 0) {
@@ -125,7 +127,7 @@ public class GenericDao<T extends RotiEntity> implements CrudService<T> {
 			if (em != null) {
 				em.close();
 			}
-		}
+		}	
 	}
 
 	@Override

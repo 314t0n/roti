@@ -36,7 +36,8 @@ public class StationsPanel extends BasicSinglePanel {
 
 	public void init() {
 		super.init();
-		setTable();
+		setTable();		
+		initComponents();
 		setButtons();
 	}
 
@@ -45,8 +46,6 @@ public class StationsPanel extends BasicSinglePanel {
 		table = TableFactory.createTable(tableModel);
 		
 		table.setDefaultRenderer(Station.class, new StatusCellRenderer());
-		
-		initComponents();
 
 	}
 

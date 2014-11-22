@@ -18,8 +18,11 @@ import javax.swing.JTable;
 public class BicyclesPanel extends BasicSinglePanel {
 
 	private GenericTableModel<Bicycle, CrudService<Bicycle>> tableModel;
+	public static final String ADD_LABEL = "Kerékpár felvétel";
 
 	private JButton addButton;
+	private JScrollPane scrollPane;
+	private JTable table;
 
 	/**
 	 * Create the panel.
@@ -31,20 +34,18 @@ public class BicyclesPanel extends BasicSinglePanel {
 	public void init() {
 		super.init();
 		setTable();
+		initComponents();
 		setButtons();
 
 	}
 
 	public void setTable() {
 
-		JTable table = TableFactory.createTable(tableModel);
-
-		JScrollPane scrollPane = new JScrollPane(table);
+		table = TableFactory.createTable(tableModel);
 
 		table.setPreferredScrollableViewportSize(new Dimension(
 				MainFrame.SIZE_X - 50, 200));
-
-		mainComponentPanel.add(scrollPane, BorderLayout.CENTER);
+	
 
 	}
 
@@ -58,14 +59,62 @@ public class BicyclesPanel extends BasicSinglePanel {
 
 	private void setButtons() {
 
-		addButton = new JButton("Felvesz");
-
 		addButton.setFont(new Font("Kartika", Font.PLAIN, 11));
 
-		addButton.setBackground(new Color(52, 152, 219));
+		addButton.setBackground(MainFrame.LIGHT_BTN);
 
-		mainComponentPanel.add(addButton, BorderLayout.SOUTH);
+	}
 
+	private void initComponents() {
+
+		scrollPane = new javax.swing.JScrollPane();
+
+		addButton = new javax.swing.JButton();
+
+		scrollPane.setViewportView(table);
+
+		addButton.setText(ADD_LABEL);
+
+		table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+		this.setLayout(layout);
+		layout.setHorizontalGroup(layout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(
+						layout.createSequentialGroup()
+								.addContainerGap()
+								.addGroup(
+										layout.createParallelGroup(
+												javax.swing.GroupLayout.Alignment.LEADING)
+												.addComponent(
+														scrollPane,
+														javax.swing.GroupLayout.PREFERRED_SIZE,
+														375,
+														javax.swing.GroupLayout.PREFERRED_SIZE)
+												.addGroup(
+														layout.createSequentialGroup()
+																.addComponent(
+																		addButton)
+																.addPreferredGap(
+																		javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+								.addContainerGap(15, Short.MAX_VALUE)));
+		layout.setVerticalGroup(layout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(
+						layout.createSequentialGroup()
+								.addContainerGap()
+								.addComponent(scrollPane,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										230,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addGroup(
+										layout.createParallelGroup(
+												javax.swing.GroupLayout.Alignment.BASELINE)
+												.addComponent(addButton))
+								.addContainerGap(30, Short.MAX_VALUE)));
 	}
 
 	public JButton getAddButton() {

@@ -24,17 +24,26 @@ public class StationDomain extends GenericDao<Station> {
 	}
 
 	public enum Status {
-		NORMAL(1.0), WARNING(0.5), ERROR(0.3);
+		NORMAL(1.0, "Rendben"), WARNING(0.5, "Alacsony"), ERROR(0.3,
+				"Vészesen alacsony");
 
 		private Double statusValue;
+		private String stringValue;
 
-		Status(Double rate) {
+		Status(Double rate, String name) {
 			statusValue = rate;
+			stringValue = name;
 		}
 
 		public Double getValue() {
 			return this.statusValue;
 		}
+
+		@Override
+		public String toString() {
+			return stringValue;
+		}
+
 	}
 
 	public Status getWarningLevelStatus(long id) {
@@ -47,8 +56,7 @@ public class StationDomain extends GenericDao<Station> {
 
 	public Status getWarningLevelStatus(Station station) {
 
-		Double rate = (double) station.getBikes().size()
-				/ (double) station.getMaximumCapacity();
+		Double rate = calculateRate(station);
 
 		if (rate <= Status.ERROR.getValue()) {
 			return Status.ERROR;
@@ -62,37 +70,21 @@ public class StationDomain extends GenericDao<Station> {
 
 	}
 
+	private Double calculateRate(Station station) {
+		return (double) station.getBikes().size()
+				/ (double) station.getMaximumCapacity();
+	}
+
 	public synchronized void returnBicycle(Customer customer, Station station)
 			throws FullCapacityException {
 		checkStationBikeCapacity(station).addBikeToStation(
 				customer.getBicycle(), station).removBikeFromCustomer(customer);
-		
+
 		update(station);
 
 	}
 
-	private StationDomain addBikeToStation(Bicycle bike, Station station) {
-		station.addBike(bike);
-		bike.setStation(station);
-		return this;
-	}
-
-	private StationDomain removBikeFromCustomer(Customer customer) {
-		Bicycle bicycle = customer.getBicycle();
-		bicycle.setCustomer(null);
-		customer.setBicycle(null);
-		return this;
-	}
-
-	private StationDomain checkStationBikeCapacity(Station station)
-			throws FullCapacityException {
-		if ((station.getBikes().size() == station.getMaximumCapacity())) {
-			throw new FullCapacityException(station);
-		}
-		return this;
-	}
-
-	public boolean transferBike(Station from, Station to)
+	public boolean transferBike(Station from, Station to, int amount)
 			throws EmptyStationException, FullCapacityException {
 
 		if (from.equals(to)) {
@@ -107,15 +99,20 @@ public class StationDomain extends GenericDao<Station> {
 			throw new FullCapacityException(to);
 		}
 
-		Bicycle bike = selectRandomBike(from);
+		for (int i = 0; i < amount; i++) {
+			
+			Bicycle bike = selectRandomBike(from);
 
-		try {
-			to.addBike(from.removeBike(bike));
-			update(from);
-			update(to);
-		} catch (NoSuchElement e) {
-			log4j.error(e.getMessage());
-			return false;
+			try {
+				
+				to.addBike(from.removeBike(bike));
+				bike.setStation(to);
+				
+			} catch (NoSuchElement e) {
+				log4j.error(e.getMessage());
+				return false;
+			}
+			
 		}
 
 		return true;
@@ -128,18 +125,14 @@ public class StationDomain extends GenericDao<Station> {
 		return station.getBikes().get(index);
 	}
 
-	public synchronized boolean addBike(Station station, Bicycle bicycle)
+	public synchronized Station addBike(Station station, Bicycle bicycle)
 			throws FullCapacityException {
 
 		if (station.getCurrentCapacity() < station.getMaximumCapacity()) {
 
-			station.addBike(bicycle);
+			station.addBicycle(bicycle);
 
-			bicycle.setStation(station);
-
-			update(station);
-
-			return true;
+			return station;
 		}
 
 		throw new FullCapacityException(station);
@@ -166,4 +159,25 @@ public class StationDomain extends GenericDao<Station> {
 		log4j.info(station + " has benn cleared!");
 	}
 
+	private synchronized StationDomain addBikeToStation(Bicycle bike,
+			Station station) {
+		station.addBike(bike);
+		bike.setStation(station);
+		return this;
+	}
+
+	private StationDomain removBikeFromCustomer(Customer customer) {
+		Bicycle bicycle = customer.getBicycle();
+		bicycle.setCustomer(null);
+		customer.setBicycle(null);
+		return this;
+	}
+
+	private StationDomain checkStationBikeCapacity(Station station)
+			throws FullCapacityException {
+		if ((station.getBikes().size() == station.getMaximumCapacity())) {
+			throw new FullCapacityException(station);
+		}
+		return this;
+	}
 }

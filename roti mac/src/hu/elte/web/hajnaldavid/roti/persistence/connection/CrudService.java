@@ -8,8 +8,8 @@ public interface CrudService<T extends RotiEntity> {
 
 	List<T> readAll();
 	T read(Integer id);
-	void create(T t);
-	void update(T t);
+	T create(T t);
+	T update(T t);
 	void delete(T t);
 	int rowCount();
 	

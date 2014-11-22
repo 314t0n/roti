@@ -51,7 +51,7 @@ public class BicycleController extends BasicController {
 
 			Bicycle bicycle = createBicycleInstance();
 
-			stationDomain.addBike(station, bicycle);
+			station = stationDomain.addBike(station, bicycle);
 
 			refreshTables();
 
@@ -62,7 +62,9 @@ public class BicycleController extends BasicController {
 		} catch (NumberFormatException e) {
 			MainFrame.showError("Hibás ár: " + e.getMessage());
 		} catch (NullPointerException e) {
-			MainFrame.showError("Rendszer hiba: " + e.getMessage());
+			MainFrame.showError("Nincs kiválasztott állomás.");
+		}catch (Exception e) {
+			MainFrame.showError("Rendszer hiba: " + e.getMessage() + ".");
 		}
 
 	}

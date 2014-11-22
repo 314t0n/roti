@@ -86,7 +86,7 @@ public class StationController extends BasicController {
 
 				transferModal.setVisible(false);
 
-			}else{
+			} else {
 				MainFrame.showError(notifications.toString());
 			}
 		});
@@ -95,7 +95,7 @@ public class StationController extends BasicController {
 
 	private void showTrasnferDialog() {
 		transferModal.setFromStations(getStationList());
-		transferModal.setToStations(getStationList());
+		transferModal.setToStations(getFreeStationList());
 		transferModal.setVisible(true);
 	}
 
@@ -103,8 +103,19 @@ public class StationController extends BasicController {
 
 		return stationDomain
 				.readAll()
+				.stream()				
+				.map(s -> s.getName() + " - (" + s.getBikes().size() + "\\"
+						+ s.getMaximumCapacity() + ")")
+				.toArray(s -> new String[s]);
+
+	}
+	
+	private String[] getFreeStationList() {
+
+		return stationDomain
+				.readAll()
 				.stream()
-				// .filter(s -> s.getBikes().size() < s.getMaximumCapacity())
+				.filter(s -> s.getBikes().size() < s.getMaximumCapacity())
 				.map(s -> s.getName() + " - (" + s.getBikes().size() + "\\"
 						+ s.getMaximumCapacity() + ")")
 				.toArray(s -> new String[s]);
@@ -140,7 +151,10 @@ public class StationController extends BasicController {
 
 			Station stationFrom = stationDomain.findByName(from);
 			Station stationTo = stationDomain.findByName(to);
-			stationDomain.transferBike(stationFrom, stationTo);
+			stationDomain.transferBike(stationFrom, stationTo, 1);
+
+			((GenericTableModel<Station, CrudService<Station>>) tableModelRouter
+					.getTableModelByName("StationTableModel")).update(stationFrom);
 
 		} catch (EmptyStationException | FullCapacityException ex) {
 			errorList.append(ex.getMessage());

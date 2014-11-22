@@ -26,7 +26,7 @@ public class Station implements RotiEntity, Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	@Column(unique=true)
+	@Column(unique = true)
 	private String name;
 	private Integer maximumCapacity;
 
@@ -65,6 +65,13 @@ public class Station implements RotiEntity, Serializable {
 		this.bikes = bikes;
 	}
 
+	public void addBicycle(Bicycle bicycle) {
+		this.bikes.add(bicycle);
+		if (bicycle.getStation() != this) {
+			bicycle.setStation(this);
+		}
+	}
+
 	@Override
 	public Object get(int columnIndex) {
 		switch (columnIndex) {
@@ -86,8 +93,8 @@ public class Station implements RotiEntity, Serializable {
 			name = (String) value;
 			break;
 		case 1:
-			maximumCapacity =  Integer.parseInt((String)value);
-			break;		
+			maximumCapacity = Integer.parseInt((String) value);
+			break;
 		}
 
 	}
@@ -108,7 +115,7 @@ public class Station implements RotiEntity, Serializable {
 		if (selected < 0) {
 			throw new NoSuchElement(bike);
 		}
-		
+
 		bikes.get(selected).setStation(null);
 
 		return this.bikes.remove(selected);

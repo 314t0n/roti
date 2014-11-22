@@ -30,7 +30,7 @@ public class Bicycle implements RotiEntity, Serializable {
 	private BikeType type;
 	private Integer lendingPrice;
 
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.REFRESH)
 	private Station station;
 
 	@OneToOne(cascade={ CascadeType.REFRESH, CascadeType.REMOVE})	

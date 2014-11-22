@@ -109,7 +109,7 @@ public class TestLending {
 		stationDomain.clearStation(station);
 
 		try {
-			stationDomain.addBike(station, bike);
+			station = stationDomain.addBike(station, bike);
 			log4j.debug("bike was added to station!");
 			//stationDomain.update(station);
 		} catch (FullCapacityException e1) {

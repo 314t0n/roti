@@ -40,8 +40,6 @@ public class LendingDomain extends GenericDao<Lending> {
 		return this;
 	}
 
-
-
 	private LendingDomain checkCustomerCredit(Customer customer, Bicycle bicycle)
 			throws NonPayAbilityException {
 		if (customer.getCredit() < bicycle.getLendingPrice()) {

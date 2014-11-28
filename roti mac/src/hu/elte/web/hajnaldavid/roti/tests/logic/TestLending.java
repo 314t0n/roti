@@ -55,8 +55,11 @@ public class TestLending {
 
 		lendingDomain = new LendingDomain();
 
-		station = new StationBuilder().setName("[Teszt] kölcsönzés")
-				.setMaximumCapacity(10).getInstance();
+		if (station == null)
+			station = new StationBuilder().setName("[Teszt] kölcsönzés")
+					.setMaximumCapacity(10).getInstance();
+
+		station = stationDomain.update(station);
 	}
 
 	@AfterClass
@@ -64,8 +67,12 @@ public class TestLending {
 		log4j.debug("after");
 
 		for (Bicycle b : station.getBikes()) {
-			b.getCustomer().setBicycle(null);
-			b.setCustomer(null);
+			try {
+				b.getCustomer().setBicycle(null);
+				b.setCustomer(null);
+			} catch (Exception ex) {
+				log4j.debug(ex.getMessage());
+			}
 		}
 
 		for (Long id : lendingIds) {
@@ -110,10 +117,10 @@ public class TestLending {
 		Customer customer = customerBuilder.setCredit(1).setName("John Doe")
 				.getInstance();
 
-		stationDomain.clearStation(station);
+		station = stationDomain.clearStation(station);
 
 		Lending lending = lendingDomain.lendBicycle(customer, station, bike);
-		
+
 		lendingIds.add(lending.getId());
 
 	}
@@ -128,7 +135,7 @@ public class TestLending {
 		Customer customer = customerBuilder.setCredit(1).setName("John Doe")
 				.getInstance();
 
-		stationDomain.clearStation(station);
+		station = stationDomain.clearStation(station);
 
 		try {
 			station = stationDomain.addBike(station, bike);
@@ -183,11 +190,9 @@ public class TestLending {
 
 		customer = new GenericDao<Customer>(Customer.class).update(customer);
 
-		stationDomain.clearStation(station);
+		station = stationDomain.clearStation(station);
 
-		stationDomain.addBike(station, bike);
-
-		station = stationDomain.update(station);
+		station = stationDomain.addBike(station, bike);
 
 		try {
 
@@ -223,47 +228,50 @@ public class TestLending {
 
 	}
 
-	public void testReturn() {
+	@Test
+	public void testReturn() throws FullCapacityException {
 
-		// log4j.debug("testReturn");
-		//
-		// Bicycle bike = bicylceBuilder.setLendingPrice(1).getInstance();
-		//
-		// Customer customer = customerBuilder.setCredit(1).setName("John Doe")
-		// .getInstance();
-		//
-		// stationDomain.clearStation(station);
-		//
-		// station.addBike(bike);
-		//
-		// LendingDomain lenderDomain = new LendingDomain();
-		// StationDomain stationDomain = new StationDomain();
-		//
-		// int startSize = lenderDomain.readAll().size();
-		//
-		// try {
-		//
-		// lenderDomain.lendBicycle(customer, station, bike);
-		//
-		// log4j.debug("lending was created!");
-		//
-		// stationDomain.returnBicycle(customer, station);
-		//
-		// } catch (NonPayAbilityException e) {
-		// log4j.debug(e.getMessage());
-		// } catch (EmptyStationException e) {
-		// log4j.debug(e.getMessage());
-		// } catch (NoSuchElement e) {
-		// log4j.debug(e.getMessage());
-		// } catch (FullCapacityException e) {
-		// log4j.debug(e.getMessage());
-		// }
-		//
-		// int currentSize = lenderDomain.readAll().size();
-		//
-		// Assert.assertNotEquals(startSize, currentSize);
-		// Assert.assertEquals(0, station.getBikes().size());
-		// Assert.assertEquals(0, customer.getCredit().intValue());
+		log4j.debug("testReturn");
+
+		Bicycle bike = bicylceBuilder.setLendingPrice(1).getInstance();
+
+		bike = new BicycleDomain().update(bike);
+
+		Customer customer = customerBuilder.setCredit(1).setName("John Doe")
+				.getInstance();
+
+		station = stationDomain.clearStation(station);
+
+		station = stationDomain.addBike(station, bike);
+
+		int startSize = lendingDomain.readAll().size();
+
+		try {
+
+			Lending lending = lendingDomain
+					.lendBicycle(customer, station, bike);
+
+			log4j.debug("lending was created!");
+
+			lendingIds.add(lending.getId());
+
+			station = stationDomain.returnBicycle(customer, station);
+
+		} catch (NonPayAbilityException e) {
+			log4j.debug(e.getMessage());
+		} catch (EmptyStationException e) {
+			log4j.debug(e.getMessage());
+		} catch (NoSuchElement e) {
+			log4j.debug(e.getMessage());
+		} catch (FullCapacityException e) {
+			log4j.debug(e.getMessage());
+		}
+
+		int currentSize = lendingDomain.readAll().size();
+
+		Assert.assertNotEquals(startSize, currentSize);
+		Assert.assertEquals(1, station.getBikes().size());
+		Assert.assertEquals(0, customer.getCredit().intValue());
 
 	}
 

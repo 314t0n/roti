@@ -75,12 +75,14 @@ public class StationDomain extends GenericDao<Station> {
 				/ (double) station.getMaximumCapacity();
 	}
 
-	public synchronized void returnBicycle(Customer customer, Station station)
+	public synchronized Station returnBicycle(Customer customer, Station station)
 			throws FullCapacityException {
-		checkStationBikeCapacity(station).addBikeToStation(
-				customer.getBicycle(), station).removBikeFromCustomer(customer);
+		
+		checkStationBikeCapacity(station);
+		addBikeToStation(customer.getBicycle(), station);
+		removBikeFromCustomer(customer);
 
-		update(station);
+		return update(station);
 
 	}
 
@@ -100,19 +102,19 @@ public class StationDomain extends GenericDao<Station> {
 		}
 
 		for (int i = 0; i < amount; i++) {
-			
+
 			Bicycle bike = selectRandomBike(from);
 
 			try {
-				
+
 				to.addBike(from.removeBike(bike));
 				bike.setStation(to);
-				
+
 			} catch (NoSuchElement e) {
 				log4j.error(e.getMessage());
 				return false;
 			}
-			
+
 		}
 
 		return true;
@@ -132,7 +134,7 @@ public class StationDomain extends GenericDao<Station> {
 
 			station.addBicycle(bicycle);
 
-			return station;
+			return update(station);
 		}
 
 		throw new FullCapacityException(station);
@@ -154,9 +156,10 @@ public class StationDomain extends GenericDao<Station> {
 
 	}
 
-	public void clearStation(Station station) {
+	public Station clearStation(Station station) {
+		log4j.info(station + " has been cleared!");
 		station.getBikes().clear();
-		log4j.info(station + " has benn cleared!");
+		return update(station);		
 	}
 
 	private synchronized StationDomain addBikeToStation(Bicycle bike,

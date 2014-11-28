@@ -14,18 +14,19 @@ import hu.elte.web.hajnaldavid.roti.persistence.entities.builder.BicycleBuilder;
 import java.awt.Component;
 
 public class BicycleController extends BasicController {
-	
-	private StationDomain stationDomain;	
+
+	private StationDomain stationDomain;
 	private AddBicycleDialog addModal;
 
-	public BicycleController(BicyclesPanel mainPanel, TableModelRouter tableModelRouter) {
+	public BicycleController(BicyclesPanel mainPanel,
+			TableModelRouter tableModelRouter) {
 
 		super(mainPanel, tableModelRouter);
 
 		mainPanel.setTableModel((GenericTableModel) tableModelRouter
 				.getTableModelByName("BicycleTableModel"));
 
-		this.stationDomain = new StationDomain();	
+		this.stationDomain = new StationDomain();
 		this.addModal = new AddBicycleDialog();
 
 		mainPanel.init();
@@ -35,7 +36,8 @@ public class BicycleController extends BasicController {
 
 	private void setActionListeners() {
 
-		((BicyclesPanel) mainPanel).getAddButton().addActionListener(p -> showAddDialog());
+		((BicyclesPanel) mainPanel).getAddButton().addActionListener(
+				p -> showAddDialog());
 
 		addModal.getCancelButton().addActionListener(p -> hideAddDialog());
 
@@ -51,7 +53,9 @@ public class BicycleController extends BasicController {
 
 			Bicycle bicycle = createBicycleInstance();
 
-			station = stationDomain.addBike(station, bicycle);
+			stationDomain.addBike(station, bicycle);
+			
+			station = stationDomain.update(station);
 
 			refreshTables();
 
@@ -62,8 +66,9 @@ public class BicycleController extends BasicController {
 		} catch (NumberFormatException e) {
 			MainFrame.showError("Hibás ár: " + e.getMessage());
 		} catch (NullPointerException e) {
+			e.printStackTrace();
 			MainFrame.showError("Nincs kiválasztott állomás.");
-		}catch (Exception e) {
+		} catch (Exception e) {
 			MainFrame.showError("Rendszer hiba: " + e.getMessage() + ".");
 		}
 

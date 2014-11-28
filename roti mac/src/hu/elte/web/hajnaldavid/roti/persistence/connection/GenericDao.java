@@ -111,7 +111,7 @@ public class GenericDao<T extends RotiEntity> implements CrudService<T> {
 			em = getEntityManager();
 			em.getTransaction().begin();
 			t = em.merge(t);	
-			em.getTransaction().commit();
+			em.getTransaction().commit();			
 			return t;
 		} catch (Exception ex) {
 			String msg = ex.getLocalizedMessage();

@@ -165,8 +165,12 @@ public class GenericTableModel<T extends RotiEntity, S extends CrudService<T>>
 	}
 
 	public void refresh() {
-		readAll();
-		fireTableDataChanged();
+		try {
+			readAll();
+			fireTableDataChanged();
+		} catch (DatabaseException ex) {
+			System.err.println(ex.getMessage());
+		}
 	}
 
 }

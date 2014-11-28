@@ -74,11 +74,9 @@ public class LendingDomain extends GenericDao<Lending> {
 		return this;
 	}
 
-	private LendingDomain saveLending(Lending lending) {
+	private Lending saveLending(Lending lending) {
 
-		this.create(lending);
-
-		return this;
+		return this.create(lending);
 
 	}
 
@@ -96,10 +94,9 @@ public class LendingDomain extends GenericDao<Lending> {
 		Lending lending = checkStationBikes(station).checkCustomerCredit(
 				customer, bicycle).createLending(customer, bicycle);
 
-		removeBikeFromStation(station, bicycle).deductCredit(customer, bicycle)
-				.saveLending(lending);
+		removeBikeFromStation(station, bicycle).deductCredit(customer, bicycle);				
 
-		return lending;
+		return saveLending(lending);
 
 	}
 

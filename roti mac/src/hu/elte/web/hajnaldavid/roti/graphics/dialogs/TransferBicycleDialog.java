@@ -10,8 +10,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-import javax.swing.JList;
-
 public class TransferBicycleDialog extends BasicFormDialog {
 
 	private JTextField amount;
@@ -34,7 +32,7 @@ public class TransferBicycleDialog extends BasicFormDialog {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("default:grow"), }));
 
-		JLabel lblNewLabel = new JLabel("Állomás neve");
+		JLabel lblNewLabel = new JLabel("Mennyiség");
 		contentPanel.add(lblNewLabel, "2, 2, right, default");
 
 		amount = new JTextField();

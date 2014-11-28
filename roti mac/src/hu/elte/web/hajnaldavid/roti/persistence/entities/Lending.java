@@ -23,10 +23,10 @@ public class Lending implements RotiEntity, Serializable {
 
 	private Integer revenue;
 	
-	@OneToOne(cascade = {CascadeType.REFRESH})
+	@OneToOne(cascade = {CascadeType.REFRESH, CascadeType.REMOVE})
 	private Bicycle bike;
 
-	@OneToOne(cascade ={CascadeType.MERGE})
+	@OneToOne(cascade ={CascadeType.MERGE, CascadeType.REMOVE})
 	private Customer customer;
 
 	public long getId() {
@@ -34,6 +34,7 @@ public class Lending implements RotiEntity, Serializable {
 	}
 
 	public void setId(long id) {
+		System.out.println("Kaptam id-t: " + id);
 		this.id = id;
 	}
 

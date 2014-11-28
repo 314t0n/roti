@@ -9,6 +9,7 @@ import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.TableModelRouter;
 import hu.elte.web.hajnaldavid.roti.logic.domainmodels.StationDomain;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.EmptyStationException;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.FullCapacityException;
+import hu.elte.web.hajnaldavid.roti.logic.exceptions.SameStationException;
 import hu.elte.web.hajnaldavid.roti.persistence.connection.CrudService;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.builder.StationBuilder;
@@ -103,13 +104,13 @@ public class StationController extends BasicController {
 
 		return stationDomain
 				.readAll()
-				.stream()				
+				.stream()
 				.map(s -> s.getName() + " - (" + s.getBikes().size() + "\\"
 						+ s.getMaximumCapacity() + ")")
 				.toArray(s -> new String[s]);
 
 	}
-	
+
 	private String[] getFreeStationList() {
 
 		return stationDomain
@@ -124,12 +125,23 @@ public class StationController extends BasicController {
 
 	private StringBuilder transferBicycle() {
 		StringBuilder errors = new StringBuilder();
-		checkAmount(errors).doTransferBike(errors);
+		try {
+			checkAmount(errors).doTransferBike(errors);
+		} catch (Exception e) {
+
+		}
 		return errors;
 	}
 
-	private StationController checkAmount(StringBuilder errorList) {
+	private StationController checkAmount(StringBuilder errorList)
+			throws Exception {
 		String fieldValue = transferModal.getAmount().getText();
+
+		if (!(fieldValue.length() > 0)) {
+			errorList.append("A mennyiség kötelezõ mezõ.");
+			errorList.append("\n");
+			throw new Exception();
+		}
 
 		try {
 			Integer.parseInt(fieldValue);
@@ -141,6 +153,9 @@ public class StationController extends BasicController {
 	}
 
 	private StationController doTransferBike(StringBuilder errorList) {
+
+		Integer amount = Integer.parseInt(transferModal.getAmount().getText());
+
 		String from = null, to = null;
 		try {
 			from = getStationName(transferModal.getFromStation()
@@ -151,16 +166,34 @@ public class StationController extends BasicController {
 
 			Station stationFrom = stationDomain.findByName(from);
 			Station stationTo = stationDomain.findByName(to);
-			stationDomain.transferBike(stationFrom, stationTo, 1);
+
+			if (stationFrom.equals(stationTo)) {
+				throw new SameStationException("Válassz különbözõ állomást!");
+			}
+
+			if (amount > stationTo.getBikes().size()) {
+				throw new Exception("Túl nagy mennyiség!");
+			}
+
+			stationDomain.transferBike(stationFrom, stationTo, amount);
+
+			stationFrom = stationDomain.update(stationFrom);
+
+			stationTo = stationDomain.update(stationTo);
 
 			((GenericTableModel<Station, CrudService<Station>>) tableModelRouter
-					.getTableModelByName("StationTableModel")).update(stationFrom);
+					.getTableModelByName("StationTableModel"))
+					.update(stationFrom);
 
-		} catch (EmptyStationException | FullCapacityException ex) {
+		} catch (EmptyStationException | FullCapacityException
+				| SameStationException ex) {
 			errorList.append(ex.getMessage());
 			errorList.append("\n");
 		} catch (NoSuchElementException ex) {
 			log4j.error(ex.getMessage() + ", " + from + ", " + to);
+		} catch (Exception ex) {
+			errorList.append(ex.getMessage());
+			errorList.append("\n");
 		}
 		return this;
 
@@ -205,7 +238,11 @@ public class StationController extends BasicController {
 
 		String fieldValue = addModal.getStationCapacityField().getText();
 		try {
-			Integer.parseInt(fieldValue);
+			Integer capactiy = Integer.parseInt(fieldValue);
+			if(!(capactiy>0)){
+				errorList.append("Az állomás kapacitása hibás érték");
+				errorList.append("\n");
+			}
 		} catch (NumberFormatException e) {
 			errorList.append("Az állomás kapacitása hibás szám");
 			errorList.append("\n");

@@ -24,7 +24,7 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 public class MainFrame extends BaseFrame {
 
 	public static volatile boolean running = false;
-	
+
 	public static final int SIZE_X = 1000;
 	public static final int SIZE_Y = 400;
 	private JTabbedPane jTabbedPane;
@@ -33,12 +33,12 @@ public class MainFrame extends BaseFrame {
 	private StationController stationController;
 	private BicycleController bicycleController;
 	private DashboardController dashboardController;
-		
-	public static final Color PADDING_BG = new Color(57,52,43);
-	public static final Color LIGHT_BG = new Color(125,124,98);
-	public static final Color DEFAULT_BG = new Color(195,188,172);
-	public static final Color LIGHT_BTN = new Color(217,216,212);
-	public static final Color DARK_BTN = new Color(34,34,47);
+
+	public static final Color PADDING_BG = new Color(57, 52, 43);
+	public static final Color LIGHT_BG = new Color(125, 124, 98);
+	public static final Color DEFAULT_BG = new Color(116, 131, 140);
+	public static final Color LIGHT_BTN = new Color(217, 216, 212);
+	public static final Color DARK_BTN = new Color(34, 34, 47);
 
 	public MainFrame() throws HeadlessException {
 
@@ -57,7 +57,7 @@ public class MainFrame extends BaseFrame {
 				tableModelRouter);
 
 		dashboardController = new DashboardController(new DashboardPanel(),
-				tableModelRouter);	
+				tableModelRouter);
 
 		setTabbedPane();
 
@@ -70,7 +70,7 @@ public class MainFrame extends BaseFrame {
 		jTabbedPane.setUI(new BasicTabbedPaneUI() {
 			@Override
 			protected void installDefaults() {
-				super.installDefaults();					 
+				super.installDefaults();
 				highlight = DEFAULT_BG;
 				lightHighlight = DEFAULT_BG;
 				shadow = DEFAULT_BG;
@@ -78,11 +78,11 @@ public class MainFrame extends BaseFrame {
 				focus = DEFAULT_BG;
 			}
 		});
-		
-		this.addWindowListener(new WindowAdapter() {	
+
+		this.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent arg0) {			
-				running = false;	
+			public void windowClosing(WindowEvent arg0) {
+				running = false;
 			}
 		});
 	}
@@ -103,7 +103,7 @@ public class MainFrame extends BaseFrame {
 							new String[] { "Név", "Kapacitás", "Aktuális",
 									"Státusz" }));
 
-		} catch (InstantiationException | IllegalAccessException e) {			
+		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 
@@ -112,8 +112,8 @@ public class MainFrame extends BaseFrame {
 	private void setTabbedPane() {
 		jTabbedPane = new JTabbedPane();
 
-		jTabbedPane
-				.addTab("Vezérlõpult", new JScrollPane(dashboardController.getMainPanel()));
+		jTabbedPane.addTab("Vezérlõpult",
+				new JScrollPane(dashboardController.getMainPanel()));
 		jTabbedPane.addTab("Állomások",
 				new JScrollPane(stationController.getMainPanel()));
 		jTabbedPane.addTab("Kerékpárok",

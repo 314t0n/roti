@@ -64,6 +64,14 @@ public class AddBicycleDialog extends BasicFormDialog {
 		stationsComboBox = new JComboBox<String>(stationListModel);
 
 		contentPanel.add(stationsComboBox, "4, 6");
+		
+		JTextField amountOfBicycles = new JTextField();
+		
+		JLabel lblNewLabel_4 = new JLabel("Darabszám (opcionális)");
+		contentPanel.add(lblNewLabel_4, "2, 8, right, default");
+
+		contentPanel.add(amountOfBicycles, "4, 8");
+
 
 	}
 

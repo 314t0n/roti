@@ -10,6 +10,7 @@ import hu.elte.web.hajnaldavid.roti.logic.exceptions.EmptyStationException;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.FullCapacityException;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.NonPayAbilityException;
 import hu.elte.web.hajnaldavid.roti.persistence.connection.CrudService;
+import hu.elte.web.hajnaldavid.roti.persistence.connection.GenericDao;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Customer;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Lending;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
@@ -28,7 +29,8 @@ public class SimulationController extends BasicController {
 
 	private List<Customer> customers = new ArrayList<Customer>();
 	private boolean status = true;
-	private static int numberOfCustomers = 1;
+	private static int NUMBER_OF_CUSTOMERS = 1;
+	private static int SLEEP = 2000;
 
 	private StationDomain stationDomain;
 	private LendingDomain lendingDomain;
@@ -72,103 +74,155 @@ public class SimulationController extends BasicController {
 		stationDomain.returnBicycle(customer, station);
 	}
 
+	private int getSleepTime() {
+		try {
+			int sleep = Integer.parseInt(((SimulationPanel) mainPanel)
+					.getSleepTimeTextArea().getText());
+			return sleep;
+		} catch (NumberFormatException ex) {
+			return SLEEP;
+		}
+	}
+
+	private int getNumberOfCustomers() {
+		try {
+			int number = Integer.parseInt(((SimulationPanel) mainPanel)
+					.getAmountOfCustomersTextArea().getText());
+			return number;
+		} catch (NumberFormatException ex) {
+			return NUMBER_OF_CUSTOMERS;
+		}
+
+	}
+
 	// @TODO refactor
 	private void doSimulation() {
 
 		MainFrame.running = !MainFrame.running;
-		
-		if(MainFrame.running){
+
+		if (MainFrame.running) {
 			((SimulationPanel) mainPanel).getStartButton().setText("Megállít");
-		}else{
+		} else {
 			((SimulationPanel) mainPanel).getStartButton().setText("Újraindít");
 		}
 
-		for (int i = 0; i < numberOfCustomers; i++) {
+		int sleepTime = getSleepTime();
+
+		int numberOfCustomers = getNumberOfCustomers();
+
+		for (int i = customers.size(); i < numberOfCustomers; i++) {
 			customers.add(createCustomer());
 		}
 
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-			@SuppressWarnings("unchecked")
 			@Override
-			public Void doInBackground() {
+			public Void doInBackground() throws InterruptedException {
+
 				while (MainFrame.running) {
-					log4j.debug("run");
+
 					for (Customer customer : customers) {
 
 						Station station = selectRandomStation();
 
 						if (customer.getBicycle() != null) {
+
 							log4j.debug("van bringa: " + customer.getName());
 
-							try {
-								returnBike(customer, station);
-								log(customer.getName()
-										+ " leadta a kerékpárt: "
-										+ station.getName());
-							} catch (FullCapacityException e) {
-								log(customer.getName()
-										+ " nem tudta leadni a kerékpárt, mert tele van az állomás: "
-										+ station.getName());
-								log4j.debug(e.getMessage());
-							}
+							customerReturnBike(station, customer);							
+							
 
 						} else {
 
 							log4j.debug("nincs bringa" + customer.getName());
 
-							try {
+							customerLendBike(station, customer);		
 
-								log(customer.getName()
-										+ " kölcsönözni próbál: "
-										+ station.getName());
-								Lending lending = lendBicycle(customer, station);
-
-								if (lending != null) {
-									log(customer.getName()
-											+ " felevett egy kerekpárt: "
-											+ lending.getBike().getType()
-													.toString() + " - "
-											+ station.getName());
-									
-								}
-
-								Thread.sleep(2000);
-
-							} catch (NonPayAbilityException
-									| EmptyStationException | NoSuchElement e1) {
-								log(customer.getName() + ": " + e1.getMessage());
-								log4j.error(e1.getMessage());
-
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
 						}
-						
-						((GenericTableModel<Station, CrudService<Station>>) tableModelRouter
-								.getTableModelByName("StationTableModel"))
-								.update(station);
+
+						Thread.sleep(sleepTime);
+
+						updateStationTable(station);
 					}
+
 					log4j.debug("sleep");
+
 					// sleep more
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(SLEEP);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
+
 				return null;
 			}
 
 			@Override
 			public void done() {
 				log4j.debug("done");
+				for (Customer customer : customers) {
+					Station station = stationDomain
+							.readAll()
+							.stream()
+							.filter(s -> s.getBikes().size() + 1 < s
+									.getMaximumCapacity()).findFirst().get();
+					try {
+						returnBike(customer, station);
+					} catch (FullCapacityException e) {					
+						e.printStackTrace();
+					}
+				}
 			}
 		};
 
 		worker.execute();
 
+	}
+
+	private synchronized void updateStationTable(Station station) {
+
+		((GenericTableModel<Station, CrudService<Station>>) tableModelRouter
+				.getTableModelByName("StationTableModel")).update(station);
+
+	}
+
+	private synchronized void customerLendBike(Station station,
+			Customer customer) {
+		try {
+
+			log(customer.getName() + " kölcsönözni próbál: "
+					+ station.getName());
+			Lending lending = lendBicycle(customer, station);
+
+			if (lending != null) {
+				log(customer.getName() + " felevett egy kerekpárt: "
+						+ lending.getBike().getType().toString() + " - "
+						+ station.getName());
+
+			}
+
+		} catch (NonPayAbilityException | EmptyStationException | NoSuchElement e1) {
+			log(customer.getName() + ": " + e1.getMessage());
+			log4j.error(e1.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private synchronized void customerReturnBike(Station station,
+			Customer customer) {
+		try {
+			returnBike(customer, station);
+			log(customer.getName() + " leadta a kerékpárt: "
+					+ station.getName());
+		} catch (FullCapacityException e) {
+			log(customer.getName()
+					+ " nem tudta leadni a kerékpárt, mert tele van az állomás: "
+					+ station.getName());
+			log4j.debug(e.getMessage());
+		}
 	}
 
 	private void log(String msg) {
@@ -190,6 +244,7 @@ public class SimulationController extends BasicController {
 		Random rnd = new Random();
 		Customer customer = new CustomerBuilder().setName(getRandomName())
 				.setCredit(rnd.nextInt(20000)).getInstance();
+		customer = new GenericDao<Customer>(Customer.class).create(customer);
 		return customer;
 	}
 

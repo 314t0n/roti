@@ -55,29 +55,29 @@ public class BicycleController extends BasicController {
 
 			for (int i = 0; i < amount; i++) {
 
-				createBicycle(station);
+				createBicycle();
 
 			}
+			
+			refreshTables();
+
+			addModal.setVisible(false);
 
 		} else {
 			MainFrame.showError("Az állomásra nem fér ennyi kerékpár.");
 		}
 	}
 
-	private void createBicycle(Station station) {
+	private void createBicycle() {
 
 		try {
+			
+			Station station = getSelectedStation();
 
 			Bicycle bicycle = createBicycleInstance();
 
-			stationDomain.addBike(station, bicycle);
-
-			station = stationDomain.update(station);
-
-			refreshTables();
-
-			addModal.setVisible(false);
-
+			station = stationDomain.addBike(station, bicycle);	
+			
 		} catch (FullCapacityException e) {
 			MainFrame.showError("Az állomás tele van.");
 		} catch (NumberFormatException e) {

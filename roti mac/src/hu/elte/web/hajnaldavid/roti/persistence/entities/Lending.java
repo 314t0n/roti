@@ -26,7 +26,7 @@ public class Lending implements RotiEntity, Serializable {
 	@OneToOne(cascade = {CascadeType.REFRESH, CascadeType.REMOVE})
 	private Bicycle bike;
 
-	@OneToOne(cascade ={CascadeType.MERGE, CascadeType.REMOVE})
+	@OneToOne(cascade ={CascadeType.REFRESH, CascadeType.REMOVE})
 	private Customer customer;
 
 	public long getId() {

@@ -1,7 +1,6 @@
 package hu.elte.web.hajnaldavid.roti.graphics.dialogs;
 
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Bicycle;
-import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;

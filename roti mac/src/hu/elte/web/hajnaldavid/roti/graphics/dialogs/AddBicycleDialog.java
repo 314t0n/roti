@@ -20,6 +20,7 @@ public class AddBicycleDialog extends BasicFormDialog {
 	private JComboBox<String> stationsComboBox;
 	private DefaultComboBoxModel<String> bikeTypesListModel;
 	private DefaultComboBoxModel<String> stationListModel;
+	private JTextField amountOfBicycles;
 
 	public AddBicycleDialog() {
 		super();
@@ -65,13 +66,12 @@ public class AddBicycleDialog extends BasicFormDialog {
 
 		contentPanel.add(stationsComboBox, "4, 6");
 		
-		JTextField amountOfBicycles = new JTextField();
+		amountOfBicycles = new JTextField();
 		
 		JLabel lblNewLabel_4 = new JLabel("Darabszám (opcionális)");
 		contentPanel.add(lblNewLabel_4, "2, 8, right, default");
 
 		contentPanel.add(amountOfBicycles, "4, 8");
-
 
 	}
 
@@ -120,5 +120,11 @@ public class AddBicycleDialog extends BasicFormDialog {
 	public DefaultComboBoxModel<String> getStationListModel() {
 		return stationListModel;
 	}
+
+	public JTextField getAmountOfBicycles() {
+		return amountOfBicycles;
+	}
+	
+	
 
 }

@@ -23,10 +23,12 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.postgresql.util.PSQLException;
 
 public class TestLending {
 
@@ -62,18 +64,25 @@ public class TestLending {
 		station = stationDomain.update(station);
 	}
 
-	@AfterClass
-	public static void clean() {
-		log4j.debug("after");
-
-		for (Bicycle b : station.getBikes()) {
+	@After
+	public void cleanBikes() {
+		log4j.debug("cleanBikes");
+		BicycleDomain bicycleDomain = new BicycleDomain();
+		for (Bicycle b : bicycleDomain.readAll()) {
 			try {
-				b.getCustomer().setBicycle(null);
-				b.setCustomer(null);
+				bicycleDomain.delete(b);
 			} catch (Exception ex) {
-				log4j.debug(ex.getMessage());
+				//nem minden teszt eset után lehet törölni
+				//hacky de nem akartam külön osztályba szervezni ezeket a teszteket
+				//log4j.debug(ex.getMessage());
 			}
 		}
+	}
+
+	@AfterClass
+	public static void clean() {
+
+		log4j.debug("after");
 
 		for (Long id : lendingIds) {
 			Integer currentId = id.intValue();
@@ -89,14 +98,18 @@ public class TestLending {
 
 	@Test(expected = NonPayAbilityException.class)
 	public void testNonPayAbilityException() throws NonPayAbilityException,
-			EmptyStationException, NoSuchElement {
+			EmptyStationException, NoSuchElement, FullCapacityException {
 
 		log4j.debug("testNonPayAbilityException");
 
 		Bicycle bike = bicylceBuilder.setLendingPrice(1).getInstance();
 
+		bike = new BicycleDomain().update(bike);
+
 		Customer customer = customerBuilder.setCredit(0).setName("John Doe")
 				.getInstance();
+
+		// station = stationDomain.addBike(station, bike);
 
 		station.addBike(bike);
 
@@ -108,11 +121,13 @@ public class TestLending {
 
 	@Test(expected = EmptyStationException.class)
 	public void testEmptyStationException() throws NonPayAbilityException,
-			EmptyStationException, NoSuchElement {
+			EmptyStationException, NoSuchElement, FullCapacityException {
 
 		log4j.debug("testEmptyStationException");
 
 		Bicycle bike = bicylceBuilder.setLendingPrice(1).getInstance();
+
+		bike = new BicycleDomain().update(bike);
 
 		Customer customer = customerBuilder.setCredit(1).setName("John Doe")
 				.getInstance();
@@ -131,6 +146,8 @@ public class TestLending {
 		log4j.debug("testLending");
 
 		Bicycle bike = bicylceBuilder.setLendingPrice(1).getInstance();
+
+		bike = new BicycleDomain().update(bike);
 
 		Customer customer = customerBuilder.setCredit(1).setName("John Doe")
 				.getInstance();

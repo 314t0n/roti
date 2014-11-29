@@ -41,20 +41,37 @@ public class BicycleController extends BasicController {
 
 		addModal.getCancelButton().addActionListener(p -> hideAddDialog());
 
-		addModal.getOkButton().addActionListener(p -> createBicycle());
+		addModal.getOkButton().addActionListener(p -> addBicycles());
 
 	}
 
-	private void createBicycle() {
+	private void addBicycles() {
+
+		Integer amount = getBicycleAmount();
+
+		Station station = getSelectedStation();
+
+		if (station.getBikes().size() + amount <= station.getMaximumCapacity()) {
+
+			for (int i = 0; i < amount; i++) {
+
+				createBicycle(station);
+
+			}
+
+		} else {
+			MainFrame.showError("Az állomásra nem fér ennyi kerékpár.");
+		}
+	}
+
+	private void createBicycle(Station station) {
 
 		try {
-
-			Station station = getSelectedStation();
 
 			Bicycle bicycle = createBicycleInstance();
 
 			stationDomain.addBike(station, bicycle);
-			
+
 			station = stationDomain.update(station);
 
 			refreshTables();
@@ -64,7 +81,7 @@ public class BicycleController extends BasicController {
 		} catch (FullCapacityException e) {
 			MainFrame.showError("Az állomás tele van.");
 		} catch (NumberFormatException e) {
-			MainFrame.showError("Hibás ár: " + e.getMessage());
+			MainFrame.showError("Hibás szám [ár]");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 			MainFrame.showError("Nincs kiválasztott állomás.");
@@ -72,6 +89,25 @@ public class BicycleController extends BasicController {
 			MainFrame.showError("Rendszer hiba: " + e.getMessage() + ".");
 		}
 
+	}
+
+	private Integer getBicycleAmount() {
+		if (addModal.getAmountOfBicycles().getText().length() > 0) {
+
+			try {
+
+				Integer amount = Integer.parseInt(addModal
+						.getAmountOfBicycles().getText());
+
+				return amount;
+
+			} catch (NumberFormatException e) {
+				MainFrame.showError("Hibás szám [mennyiség]");
+			}
+
+		}
+
+		return 0;
 	}
 
 	private void refreshTables() {
@@ -99,8 +135,11 @@ public class BicycleController extends BasicController {
 
 	private Station getSelectedStation() {
 
-		String name = addModal.getStationListModel().getSelectedItem()
+		String textValue = addModal.getStationListModel().getSelectedItem()
 				.toString();
+		
+		String name = textValue.replaceAll("[(\\d/\\d)]","").trim();
+		
 		return stationDomain.findByName(name);
 
 	}
@@ -127,7 +166,7 @@ public class BicycleController extends BasicController {
 
 		return stationDomain.readAll().stream()
 				.filter(s -> s.getBikes().size() < s.getMaximumCapacity())
-				.map(s -> s.getName()).toArray(s -> new String[s]);
+				.map(s -> s.getName() + " (" + s.getBikes().size() + "/" + s.getMaximumCapacity() + ")" ).toArray(s -> new String[s]);
 
 	}
 

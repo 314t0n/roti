@@ -128,14 +128,13 @@ public class SimulationController extends BasicController {
 
 							log4j.debug("van bringa: " + customer.getName());
 
-							customerReturnBike(station, customer);							
-							
+							customerReturnBike(station, customer);
 
 						} else {
 
 							log4j.debug("nincs bringa" + customer.getName());
 
-							customerLendBike(station, customer);		
+							customerLendBike(station, customer);
 
 						}
 
@@ -164,25 +163,30 @@ public class SimulationController extends BasicController {
 					Station station = stationDomain
 							.readAll()
 							.stream()
-							.filter(s -> s.getBikes().size() + 1 < s
+							.filter(s -> s.getBikes().size() + 1 <= s
 									.getMaximumCapacity()).findFirst().get();
 					try {
 						returnBike(customer, station);
-					} catch (FullCapacityException e) {					
-						e.printStackTrace();
+					} catch (FullCapacityException e) {
+						log4j.debug((e.getMessage()));
+					} catch (Exception e) {
+						log4j.debug((e.getMessage()));
 					}
 				}
 			}
 		};
-
-		worker.execute();
+		
+		if (MainFrame.running) {
+			worker.execute();
+		}
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private synchronized void updateStationTable(Station station) {
 
-		((GenericTableModel<Station, CrudService<Station>>) tableModelRouter
-				.getTableModelByName("StationTableModel")).update(station);
+		tableModelRouter.getTableModelByName("StationTableModel").update(
+				station);
 
 	}
 

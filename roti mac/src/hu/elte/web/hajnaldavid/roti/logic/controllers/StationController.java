@@ -169,7 +169,7 @@ public class StationController extends BasicController {
 				throw new SameStationException("Válassz különbözõ állomást!");
 			}
 
-			if (amount > stationTo.getBikes().size()) {
+			if (amount > stationFrom.getBikes().size()) {
 				throw new Exception("Túl nagy mennyiség!");
 			}
 
@@ -197,7 +197,7 @@ public class StationController extends BasicController {
 	}
 
 	/**
-	 * @todo values[0] 
+	 * @todo values[0]
 	 * @param fieldValue
 	 * @return
 	 */

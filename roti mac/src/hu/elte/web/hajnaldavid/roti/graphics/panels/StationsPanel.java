@@ -46,6 +46,8 @@ public class StationsPanel extends BasicSinglePanel {
 		table = TableFactory.createTable(tableModel);
 		
 		table.setDefaultRenderer(Station.class, new StatusCellRenderer());
+		
+		table.getColumnModel().getColumn(3).setCellRenderer(new StatusCellRenderer());
 
 	}
 

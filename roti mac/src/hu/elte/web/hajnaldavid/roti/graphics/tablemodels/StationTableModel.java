@@ -8,7 +8,8 @@ public class StationTableModel<T extends Station, S extends CrudService<T>>
 		extends GenericTableModel<T, S> {
 
 	public StationTableModel(S source, String[] columnNames) {
-		super(source, columnNames);				
+		super(source, columnNames);	
+		
 	}
 	
 	@Override

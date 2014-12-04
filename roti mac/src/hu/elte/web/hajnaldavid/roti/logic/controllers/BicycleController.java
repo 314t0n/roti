@@ -3,7 +3,6 @@ package hu.elte.web.hajnaldavid.roti.logic.controllers;
 import hu.elte.web.hajnaldavid.roti.graphics.dialogs.AddBicycleDialog;
 import hu.elte.web.hajnaldavid.roti.graphics.frames.MainFrame;
 import hu.elte.web.hajnaldavid.roti.graphics.panels.BicyclesPanel;
-import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.GenericTableModel;
 import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.TableModelRouter;
 import hu.elte.web.hajnaldavid.roti.logic.domainmodels.StationDomain;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.FullCapacityException;
@@ -18,12 +17,13 @@ public class BicycleController extends BasicController {
 	private StationDomain stationDomain;
 	private AddBicycleDialog addModal;
 
+	@SuppressWarnings("unchecked")
 	public BicycleController(BicyclesPanel mainPanel,
 			TableModelRouter tableModelRouter) {
 
 		super(mainPanel, tableModelRouter);
 
-		mainPanel.setTableModel((GenericTableModel) tableModelRouter
+		mainPanel.setTableModel(tableModelRouter
 				.getTableModelByName("BicycleTableModel"));
 
 		this.stationDomain = new StationDomain();
@@ -58,7 +58,7 @@ public class BicycleController extends BasicController {
 				createBicycle();
 
 			}
-			
+
 			refreshTables();
 
 			addModal.setVisible(false);
@@ -71,13 +71,13 @@ public class BicycleController extends BasicController {
 	private void createBicycle() {
 
 		try {
-			
+
 			Station station = getSelectedStation();
 
 			Bicycle bicycle = createBicycleInstance();
 
-			station = stationDomain.addBike(station, bicycle);	
-			
+			station = stationDomain.addBike(station, bicycle);
+
 		} catch (FullCapacityException e) {
 			MainFrame.showError("Az állomás tele van.");
 		} catch (NumberFormatException e) {
@@ -114,8 +114,7 @@ public class BicycleController extends BasicController {
 
 		((BicyclesPanel) mainPanel).getTableModel().refresh();
 
-		((GenericTableModel) tableModelRouter
-				.getTableModelByName("StationTableModel")).refresh();
+		(tableModelRouter.getTableModelByName("StationTableModel")).refresh();
 
 	}
 
@@ -137,9 +136,9 @@ public class BicycleController extends BasicController {
 
 		String textValue = addModal.getStationListModel().getSelectedItem()
 				.toString();
-		
-		String name = textValue.replaceAll("[(\\d/\\d)]","").trim();
-		
+
+		String name = textValue.replaceAll("[(\\d/\\d)]", "").trim();
+
 		return stationDomain.findByName(name);
 
 	}
@@ -164,9 +163,13 @@ public class BicycleController extends BasicController {
 
 	private String[] getStationList() {
 
-		return stationDomain.readAll().stream()
+		return stationDomain
+				.readAll()
+				.stream()
 				.filter(s -> s.getBikes().size() < s.getMaximumCapacity())
-				.map(s -> s.getName() + " (" + s.getBikes().size() + "/" + s.getMaximumCapacity() + ")" ).toArray(s -> new String[s]);
+				.map(s -> s.getName() + " (" + s.getBikes().size() + "/"
+						+ s.getMaximumCapacity() + ")")
+				.toArray(s -> new String[s]);
 
 	}
 

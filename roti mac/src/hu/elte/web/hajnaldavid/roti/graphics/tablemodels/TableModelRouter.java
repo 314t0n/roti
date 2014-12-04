@@ -3,27 +3,27 @@ package hu.elte.web.hajnaldavid.roti.graphics.tablemodels;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.table.AbstractTableModel;
-
 public class TableModelRouter {
 
-	private Map<String, AbstractTableModel> router;
+	@SuppressWarnings("rawtypes")
+	private Map<String, GenericTableModel> router;
 
+	@SuppressWarnings("rawtypes")
 	public TableModelRouter() {
-		this.router = new HashMap<String, AbstractTableModel>();
+		this.router = new HashMap<String, GenericTableModel>();
 	}
 
-	public AbstractTableModel getTableModelByName(String name) {
-		if (!router.containsKey(name)) {
-			System.out.println("nope");
+	@SuppressWarnings({ "rawtypes" })
+	public <T> GenericTableModel getTableModelByName(String name) {
+		if (!router.containsKey(name)) {			
 			throw new NullPointerException("Key not found, avaiable keys: "
 					+ router.keySet().toString());
 		}
-		return router.get(name);
+		return (GenericTableModel) router.get(name);
 	}
 
-	public void addTableModel(String key, AbstractTableModel model) {
-		router.put(key, model);
+	public void addTableModel(String key, GenericTableModel model) {
+		router.put(key,  model);
 	}
 
 }

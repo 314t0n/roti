@@ -4,13 +4,11 @@ import hu.elte.web.hajnaldavid.roti.graphics.dialogs.AddStationDialog;
 import hu.elte.web.hajnaldavid.roti.graphics.dialogs.TransferBicycleDialog;
 import hu.elte.web.hajnaldavid.roti.graphics.frames.MainFrame;
 import hu.elte.web.hajnaldavid.roti.graphics.panels.StationsPanel;
-import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.GenericTableModel;
 import hu.elte.web.hajnaldavid.roti.graphics.tablemodels.TableModelRouter;
 import hu.elte.web.hajnaldavid.roti.logic.domainmodels.StationDomain;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.EmptyStationException;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.FullCapacityException;
 import hu.elte.web.hajnaldavid.roti.logic.exceptions.SameStationException;
-import hu.elte.web.hajnaldavid.roti.persistence.connection.CrudService;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.Station;
 import hu.elte.web.hajnaldavid.roti.persistence.entities.builder.StationBuilder;
 
@@ -28,9 +26,8 @@ public class StationController extends BasicController {
 
 		super(mainPanel, tableModelRouter);
 
-		mainPanel
-				.setTableModel((GenericTableModel<Station, CrudService<Station>>) tableModelRouter
-						.getTableModelByName("StationTableModel"));
+		mainPanel.setTableModel(tableModelRouter
+				.getTableModelByName("StationTableModel"));
 
 		this.addModal = new AddStationDialog();
 
@@ -152,6 +149,7 @@ public class StationController extends BasicController {
 		return this;
 	}
 
+	@SuppressWarnings("unchecked")
 	private StationController doTransferBike(StringBuilder errorList) {
 
 		Integer amount = Integer.parseInt(transferModal.getAmount().getText());
@@ -181,9 +179,8 @@ public class StationController extends BasicController {
 
 			stationTo = stationDomain.update(stationTo);
 
-			((GenericTableModel<Station, CrudService<Station>>) tableModelRouter
-					.getTableModelByName("StationTableModel"))
-					.update(stationFrom);
+			tableModelRouter.getTableModelByName("StationTableModel").update(
+					stationFrom);
 
 		} catch (EmptyStationException | FullCapacityException
 				| SameStationException ex) {
@@ -200,7 +197,7 @@ public class StationController extends BasicController {
 	}
 
 	/**
-	 * @todo values[0] is evil
+	 * @todo values[0] 
 	 * @param fieldValue
 	 * @return
 	 */
@@ -239,7 +236,7 @@ public class StationController extends BasicController {
 		String fieldValue = addModal.getStationCapacityField().getText();
 		try {
 			Integer capactiy = Integer.parseInt(fieldValue);
-			if(!(capactiy>0)){
+			if (!(capactiy > 0)) {
 				errorList.append("Az állomás kapacitása hibás érték");
 				errorList.append("\n");
 			}
